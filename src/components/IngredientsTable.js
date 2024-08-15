@@ -1,154 +1,13 @@
 import React, { useEffect, useState, useRef } from "react";
-import { SearchOutlined, DeleteOutlined } from "@ant-design/icons";
+import { SearchOutlined, DeleteOutlined, LoadingOutlined} from "@ant-design/icons";
 import { Table, Modal, Button, Input, Space, Pagination } from "antd";
 import Highlighter from "react-highlight-words";
 import { Typography } from "antd";
 import { Tabs, InputNumber, message } from "antd";
-
+import {NutrientsTable} from "./utils";
+import RecipeSummary from "./RecipeSummary";
 const { Title } = Typography;
-
-const ingredientsTabs = (selectedRow, amount) => {
-  const nutrientCategories = {
-    proximates: {
-      metabolic_energy: "Metabolic Energy",
-      water: "Water",
-      dry_matter: "Dry Matter",
-      fiber: "Fiber",
-      ash: "Ash",
-      nitrogen_free_extract: "Nitrogen Free Extract",
-      protein: "Protein",
-      fat: "Fat",
-    },
-    carbohydrates: {
-      starch: "Starch",
-      sugars: "Sugars",
-    },
-    aminoAcids: {
-      proline: "Proline",
-      arginine: "Arginine",
-      histidine: "Histidine",
-      isoleucine: "Isoleucine",
-      leucine: "Leucine",
-      lysine: "Lysine",
-      methionine: "Methionine",
-      cystine: "Cystine",
-      phenylalanine: "Phenylalanine",
-      tyrosine: "Tyrosine",
-      threonine: "Threonine",
-      tryptophan: "Tryptophan",
-      valine: "Valine",
-      alanine: "Alanine",
-      methionine_cystine: "Methionine Cystine",
-      phenylalanine_tyrosine: "Phenylalanine Tyrosine",
-      glutamic_acid: "Glutamic Acid",
-      aspartic_acid: "Aspartic Acid",
-      serine: "Serine",
-      glycine: "Glycine",
-    },
-    minerals: {
-      calcium: "Calcium",
-      phosphorus: "Phosphorus",
-      sodium: "Sodium",
-      chlorine: "Chlorine",
-      potassium: "Potassium",
-      magnesium: "Magnesium",
-      sulfur: "Sulfur",
-      copper: "Copper",
-      iron: "Iron",
-      manganese: "Manganese",
-      selenium: "Selenium",
-      zinc: "Zinc",
-      iodine: "Iodine",
-    },
-    vitamins: {
-      vitamin_a: "Vitamin A",
-      vitamin_d: "Vitamin D",
-      vitamin_e: "Vitamin E",
-      vitamin_k: "Vitamin K",
-      biotin: "Biotin",
-      folate: "Folate",
-      niacin: "Niacin",
-      pantothenic_acid: "Pantothenic Acid",
-      pyridoxine: "Pyridoxine",
-      riboflavin: "Riboflavin",
-      thiamin: "Thiamin",
-      vitamin_b12: "Vitamin B12",
-      vitamin_c: "Vitamin C",
-      beta_carotene: "Beta Carotene",
-      choline: "Choline",
-    },
-    fats: {
-      linoleic_acid: "Linoleic Acid",
-      linolenic_acid: "Linolenic Acid",
-      arachidonic_acid: "Arachidonic Acid",
-      eicosapentaenoic_acid: "Eicosapentaenoic Acid",
-      docosahexaenoic_acid: "Docosahexaenoic Acid",
-      taurine: "Taurine",
-      sum_n_3: "Sum N-3",
-      sum_n_6: "Sum N-6",
-    },
-  };
-
-  const generateTable = (data, columns) => {
-    return data.length > 0 ? (
-      <Table
-        dataSource={data}
-        columns={columns}
-        pagination={{ defaultPageSize: 5, hideOnSinglePage: true }}
-      />
-    ) : (
-      <Title level={5}>Data not reported</Title>
-    );
-  };
-
-  const generateColumns = () => {
-    return [
-      { title: "Nutrient", dataIndex: "nutrient", key: "nutrient" },
-      { title: "Value", dataIndex: "value", key: "value" },
-      { title: "Unit", dataIndex: "unit", key: "unit" },
-    ];
-  };
-
-  const generateData = (category, selectedRow, unit) => {
-    return Object.entries(selectedRow)
-      .filter(
-        ([key, value]) =>
-          nutrientCategories[category].hasOwnProperty(key) && value !== null
-      )
-      .map(([key, value]) => {
-        // NOTE: The amount is divided by 100 because the values are per 100g
-        return {
-          nutrient: nutrientCategories[category][key],
-          value: parseFloat((amount / 100) * value).toFixed(2),
-          unit: unit,
-        };
-      });
-  };
-
-  return (
-    <div>
-      <Tabs defaultActiveKey="1"
-        items={[
-          ...Object.entries(nutrientCategories).map(
-            ([category, nutrients], index) => ({
-              label: category.toUpperCase(),
-              key: index,
-              children: generateTable(
-                generateData(
-                  category,
-                  selectedRow,
-                  category === "proximates" ? "g" : "mg"
-                ),
-                generateColumns()
-              )
-            })
-          )
-        ]}
-      />
-    </div>
-  );
-};
-
+import { Flex, Spin } from 'antd';
 
 const IngredientsTable = () => {
   const [dataSource, setDataSource] = useState([]);
@@ -162,9 +21,35 @@ const IngredientsTable = () => {
   const key = "updatable";
   const [showRecipeModal, setShowRecipeModal] = useState(false);
 
+  const handleRowClick = (record) => {
+    setSelectedRow(record);
+  };
+
+  const closeModal = () => {
+    setSelectedRow(null);
+    setAmount(100); // Reset the amount to 100g after closing the modal
+  };
+
+
+  const handleDelete = (record) => {
+    setCurrentRecipe((prevRecipe) => {
+      const updatedRecipe = prevRecipe.filter(item => item !== record);
+      return updateInclusion(updatedRecipe);
+    });
+  };
+
   const openRecipeModal = () => {
     setShowRecipeModal(true);
+
   };
+
+  const updateInclusion = (prevRecipe) => {
+    const totalAmount = prevRecipe.reduce((sum, item) => sum + item.amount, 0);
+    prevRecipe.forEach(item => {
+    item.inclusion = parseFloat((item.amount / totalAmount) * 100).toFixed(2);
+    });
+    return [...prevRecipe];
+  }
 
   const closeRecipeModal = () => {
     setShowRecipeModal(false);
@@ -176,15 +61,27 @@ const IngredientsTable = () => {
       messageApi.open({
         key,
         type: "success",
-        content: "Added to recipe!",
+        content: amount + "g of " + selectedRow.name + " added to recipe",
         duration: 1,
       });
     }, 100);
     // Add selectedRow and amount to currentRecipe
-    setCurrentRecipe((prevRecipe) => [
-      ...prevRecipe,
-      { ingredient: selectedRow, amount: amount },
-    ]);
+    setCurrentRecipe((prevRecipe) => {
+      const existingIngredient = prevRecipe.find(item => item.ingredient === selectedRow);
+      console.log(selectedRow)
+      if (existingIngredient) {
+      existingIngredient.amount = existingIngredient.amount + amount;
+      } else {
+      prevRecipe.push({ ingredient: selectedRow, amount: amount });
+      }
+      
+      // const totalAmount = prevRecipe.reduce((sum, item) => sum + item.amount, 0);
+      // prevRecipe.forEach(item => {
+      // item.inclusion = parseFloat((item.amount / totalAmount) * 100).toFixed(2);
+      // });
+      updateInclusion(prevRecipe)
+      return [...prevRecipe];
+    });
     console.log(currentRecipe)
   };
 
@@ -382,22 +279,23 @@ const IngredientsTable = () => {
   }, []);
 
   while (!dataSource || dataSource.length === 0) {
-    return <h1>Loading...</h1>;
+    return (
+      <div className="flex justify-center items-center h-full">
+        <Spin
+          indicator={
+            <LoadingOutlined
+              style={{
+                fontSize: 48,
+              }}
+              spin
+            />
+          }
+        />
+        <h1 className="text-4xl font-poppins text-earth-green">Loading...</h1>
+      </div>
+    );
   }
 
-  const handleRowClick = (record) => {
-    setSelectedRow(record);
-  };
-
-  const closeModal = () => {
-    setSelectedRow(null);
-    setAmount(100); // Reset the amount to 100g after closing the modal
-  };
-
-
-  const handleDelete = (record) => {
-    setCurrentRecipe((prevRecipe) => prevRecipe.filter(item => item !== record));
-  };
 
   return (
     <div className="font-poppins text-earth-green" style={{ display: "" }}>
@@ -432,7 +330,7 @@ const IngredientsTable = () => {
               value={amount}
               onChange={handleAmountChange}
             />
-            {ingredientsTabs(selectedRow, amount)}
+            {NutrientsTable(selectedRow, amount)}
             <div
               style={{ position: "absolute", bottom: "20px", right: "20px" }}
             >
@@ -453,7 +351,22 @@ const IngredientsTable = () => {
           </Modal>
         </div>
       )}
-      <div className=" display-inline">
+      <div className="flex justify-between">
+        {/* <div className="flex-none">
+        <button
+          onClick={openRecipeModal}
+          className="fill-earth-green rounded-md block text-base text-beige font-poppins"
+          style={{
+            backgroundColor: "#4F6F52",
+            width: "200px",
+            height: "50px",
+            outline: "1px solid black",
+          }}
+        >
+          Analyze Recipe
+        </button>
+        </div> */}
+        <div className="flex-none"> 
         <button
           onClick={openRecipeModal}
           className="fill-earth-green rounded-md block text-base text-beige font-poppins"
@@ -470,16 +383,20 @@ const IngredientsTable = () => {
             alt="Food Bowl"
           />
         </button>
+        </div>
       </div>
+      
 
       <Modal
         visible={showRecipeModal}
         onCancel={closeRecipeModal}
+        bodyStyle={{ height: 700 }}
         footer={null}
+        className="modal"
       >
         <Title level={3}>Current Recipe</Title>
-        
-        <Table
+        <RecipeSummary currentRecipe = {currentRecipe} handleDelete={handleDelete}></RecipeSummary>
+        {/* <Table
           dataSource={currentRecipe}
           columns={[
             { title: "Ingredient", dataIndex: "ingredient.name", render: (text, record) => record.ingredient.name },
@@ -494,8 +411,9 @@ const IngredientsTable = () => {
           ]}
           rowKey={(record, index) => index}
           pagination={false}
-        />
+        /> */}
       </Modal>
+
     </div>
   );
 };

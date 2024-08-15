@@ -11,11 +11,10 @@ import AddIcon from '@mui/icons-material/Add';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
-import RecipeGenerator from './RecipeGenerator';
-import RecipeCarousel from "@/components/RecipeCarousel";
-
+import RecipeGenerator from "./RecipeGenerator";
 function RecipesHome() {
     return (
+
         <div className="parent bg-beige px-20 pt-10" style={{height:'100%', minHeight:'100vh'}}>
 
             <nav>
@@ -28,7 +27,8 @@ function RecipesHome() {
                 {/* <PetInfo></PetInfo> */}
                 {/* <RecipeCarousel></RecipeCarousel> */}
                 <div>
-                <RecipeGenerator></RecipeGenerator>
+                    <RecipeGenerator></RecipeGenerator>
+
                 </div>
         </div>
 
