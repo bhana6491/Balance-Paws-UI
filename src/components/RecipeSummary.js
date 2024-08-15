@@ -30,7 +30,7 @@ const RecipeSummary = ( {currentRecipe, handleDelete}) => {
                 <Tabs.TabPane tab="Nutrient Composition" key="2">
                     <NutrientSummary recipe={currentRecipe}/>
                 </Tabs.TabPane>
-                <Tabs.TabPane tab="Nutritent Analysis" key="3">
+                <Tabs.TabPane tab="Nutrient Analysis" key="3">
                 </Tabs.TabPane>
 
                 {/* <Tabs.TabPane tab="Nutritional Information" key="2">

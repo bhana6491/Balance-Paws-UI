@@ -281,17 +281,18 @@ const IngredientsTable = () => {
   while (!dataSource || dataSource.length === 0) {
     return (
       <div className="flex justify-center items-center h-full">
-        <Spin
-          indicator={
-            <LoadingOutlined
-              style={{
-                fontSize: 48,
-              }}
-              spin
-            />
-          }
+      <Spin
+        indicator={
+        <LoadingOutlined
+          style={{
+          fontSize: 48,
+          color: '#4F6F52', // Change the color here
+          }}
+          spin
         />
-        <h1 className="text-4xl font-poppins text-earth-green">Loading...</h1>
+        }
+      />
+      <h1 className="text-4xl font-poppins text-earth-green my-10 ml-10">Loading...</h1>
       </div>
     );
   }

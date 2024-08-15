@@ -191,8 +191,9 @@ const Recipe = ({ recipe }) => {
                     dataSource={data}
                     columns={columns}
                     pagination={{ defaultPageSize: 8, hideOnSinglePage: true }}
-                    scroll={{ y: 385 }}
-                    style={{ height: "500px", minHeight: "500px" }}
+                    scroll={{ y: 400 }}
+                    // overflowY="scroll"
+                    style={{ height: "500px", minHeight: "600px", overflowY: "scroll" }}
                     expandable={{
                         expandedRowRender: (record) => {
                             const ingredientColumns = [
@@ -210,7 +211,10 @@ const Recipe = ({ recipe }) => {
                                 <Table
                                     columns={ingredientColumns}
                                     dataSource={ingredientData}
-                                    pagination={false}
+                                    pagination={{ defaultPageSize: 8, hideOnSinglePage: true }}
+                                    scroll={{ y: 400 }}
+                                    overflowY="scroll"
+                
                                 />
                             );
                         },
