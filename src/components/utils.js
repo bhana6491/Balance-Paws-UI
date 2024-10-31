@@ -1,7 +1,7 @@
 import {Tabs, Table, Typography} from 'antd';
 const { Title } = Typography;
 
-const unit_mappings = {
+export const unit_mappings = {
   water: 'g',
   protein: 'g',
   fat: 'g',
@@ -70,6 +70,20 @@ const unit_mappings = {
   sum_n_6: 'g'
 };
 
+// These are nutrients that will need to be converted to grams from mg in order to comply with the nutrient recommendations framework. 
+/**
+ * Represents an array of converted nutrients.
+ * @type {Array}
+ */
+const nutrients_mg_to_g = ['calcium', 'phosphorus', 'potassium', 'sodium', 'chloride'];
+const nutrients_iu_to_mg = ['iodine', 'selenium', 'folate', 'vitamin_b12'];
+/**
+ * Renders a table of nutrients based on the selected row and amount.
+ *
+ * @param {object} selectedRow - The selected row object.
+ * @param {number} amount - The amount value.
+ * @returns {JSX.Element} - The rendered table component.
+ */
 export const NutrientsTable = (selectedRow, amount) => {
     const nutrientCategories = {
       proximates: {
@@ -180,11 +194,11 @@ export const NutrientsTable = (selectedRow, amount) => {
         )
         .map(([key, value]) => {
           // NOTE: The amount is divided by 100 because the values are per 100g
-          return {
-            nutrient: nutrientCategories[category][key],
-            value: parseFloat((amount / 100) * value).toFixed(2),
-            unit: unit_mappings[key],
-          };
+            return {
+              nutrient: nutrientCategories[category][key],
+              value: parseFloat((amount / 100) * (nutrients_mg_to_g.includes(key) || nutrients_iu_to_mg.includes(key) ? value / 1000 : value)).toFixed(2),
+              unit: nutrients_mg_to_g.includes(key) ? 'g' : (nutrients_iu_to_mg.includes(key) ? 'mg' : unit_mappings[key]),
+            };
         });
     };
   

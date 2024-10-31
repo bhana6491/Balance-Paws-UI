@@ -1,69 +1,10 @@
 import React, { useState } from "react";
 import { Cascader, Typography, Divider, ConfigProvider, InputNumber} from "antd";
+import {speciesOptions, activityLevelOptions, lifeStageOptions} from "@/app/recipes/constants";
 import IngredientsTable from "@/components/IngredientsTable";
 import { StyleProvider } from '@ant-design/cssinjs';
 import { useEffect } from "react";
 const {Title} = Typography;
-const speciesOptions = [
-  {
-    value: "Dog",
-    label: "Dog",
-    children: [
-      {
-        value: "german_shepherd",
-        label: "German Shepherd",
-      },
-    ],
-  },
-  {
-    value: "Cat",
-    label: "Cat",
-    children: [
-      {
-        value: "tabby",
-        label: "Tabby",
-      },
-    ],
-  },
-];
-
-const activityLevelOptions = [
-  {
-    value: "low",
-    label: "Low",
-  },
-  {
-    value: "moderate",
-    label: "Moderate",
-  },
-  {
-    value: "high",
-    label: "High",
-  },
-  {
-    value: "performance",
-    label: "Performance",
-  },
-];
-
-const lifeStageOptions = [
-  {
-    value: "reproduction",
-    label: "Reproduction",
-  },
-  {
-    value: "growth",
-    label: "Growth",
-  },
-  {
-    value: "adult",
-    label: "Adult",
-  },
-  {
-    value: "senior",
-    label: "Senior",
-  },
-];
 
 export default function RecipeGenerator() {
   const [species, setSpecies] = useState([]);
@@ -86,7 +27,7 @@ export default function RecipeGenerator() {
     if (species.length > 0 && activityLevel.length > 0 && lifestage.length > 0 && weight > 0) {
       setInputsFilled(true);
     } else {
-      setInputsFilled(false);
+      setInputsFilled(true);
     }
   }, [species, activityLevel, lifestage, weight]);
 
@@ -112,21 +53,21 @@ export default function RecipeGenerator() {
               <Cascader
                 options={speciesOptions}
                 placeholder="Species"
-                className="mt-5"
+                className="mt-5 border-black border-2 rounded-lg"
                 onChange={(e) => setSpecies(e)}
                 style={{ width: "15%"}}
               />
               <Cascader
                 options={activityLevelOptions}
                 placeholder="Activity Level"
-                className="mt-5"
+                className="mt-5 border-black border-2 rounded-lg"
                 onChange={(e) => setActivityLevel(e)}
                 style={{ width: "15%" }}
               />
               <Cascader
                 options={lifeStageOptions}
                 placeholder="Life Stage"
-                className="mt-5"
+                className="mt-5 border-black border-2 rounded-lg"
                 onChange={(e) => setLifeStage(e)}
                 style={{ width: "15%" }}
               />
@@ -134,7 +75,7 @@ export default function RecipeGenerator() {
                 min={1}
                 max={10}
                 placeholder="Ideal Weight (kg)"
-                className="mt-5"
+                className="mt-5 border-black border-2 rounded-lg"
                 style={{ width: "10%" }}
                 onChange={(e) => setWeight(e)}
               />

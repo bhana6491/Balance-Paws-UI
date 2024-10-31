@@ -300,16 +300,18 @@ const IngredientsTable = () => {
 
   return (
     <div className="font-poppins text-earth-green" style={{ display: "" }}>
-      <Table
-        dataSource={dataSource}
-        columns={ingredientCols}
-        rowKey="name"
-        onRow={(record) => ({
-          onClick: () => handleRowClick(record),
-        })}
-        scroll={{ y: 385 }}
-        style={{ height: "500px", minHeight: "500px" }}
-      />
+      <div className="table-container">
+        <Table
+          dataSource={dataSource}
+          columns={ingredientCols}
+          rowKey="name"
+          onRow={(record) => ({
+            onClick: () => handleRowClick(record),
+          })}
+          scroll={{ y: 385 }}
+          style={{ height: "500px", minHeight: "500px" }}
+        />
+      </div>
 
       {selectedRow && (
         <div className="w-80">

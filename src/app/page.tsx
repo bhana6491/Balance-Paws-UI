@@ -1,3 +1,4 @@
+'use client';
 import { Button, Typography } from 'antd';
 import React from 'react';
 import Image from 'next/image';

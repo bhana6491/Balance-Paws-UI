@@ -12,74 +12,152 @@ const items = [
     label: 'Action 2',
   },
 ];
-const unit_mappings = {
-    water: 'g',
-    protein: 'g',
-    fat: 'g',
-    fiber: 'g',
-    ash: 'g',
-    starch: 'g',
-    sugars: 'g',
-    proline: 'g',
-    arginine: 'g',
-    histidine: 'g',
-    isoleucine: 'g',
-    leucine: 'g',
-    lysine: 'g',
-    methionine: 'g',
-    cystine: 'g',
-    phenylalanine: 'g',
-    tyrosine: 'g',
-    threonine: 'g',
-    tryptophan: 'g',
-    valine: 'g',
-    glutamic_acid: 'g',
-    aspartic_acid: 'g',
-    glycine: 'g',
-    serine: 'g',
-    alanine: 'g',
-    calcium: 'mg',
-    phosphorus: 'mg',
-    sodium: 'mg',
-    chlorine: 'mg',
-    potassium: 'mg',
-    magnesium: 'mg',
-    sulfur: 'mg',
-    copper: 'mg',
-    iron: 'mg',
-    manganese: 'mg',
-    selenium: 'ug',
-    zinc: 'mg',
-    iodine: 'ug',
-    biotin: 'ug',
-    folate: 'ug',
-    niacin: 'mg',
-    pantothenic_acid: 'mg',
-    pyridoxine: 'mg',
-    riboflavin: 'mg',
-    thiamin: 'mg',
-    vitamin_b12: 'ug',
-    vitamin_d: 'iu',
-    vitamin_e: 'iu',
-    vitamin_k: 'ug',
-    vitamin_a: 'iu',
-    vitamin_c: 'mg',
-    beta_carotene: 'ug',
-    choline: 'mg',
-    linoleic_acid: 'g',
-    linolenic_acid: 'g',
-    arachidonic_acid: 'g',
-    eicosapentaenoic_acid: 'g',
-    docosahexaenoic_acid: 'g',
-    taurine: 'g',
-    metabolic_energy: 'kcal/g',
-    dry_matter: 'g',
-    nitrogen_free_extract: 'g',
-    methionine_cystine: 'g',
-    phenylalanine_tyrosine: 'g',
-    sum_n_3: 'g',
-    sum_n_6: 'g'
-  };
+
+// This is the unit mapping that aligns with the nutrient analysis table. 
+// Note: The unit mapping only differs for the nutrients that need to be converted to g from mg or iu to mg. Reference utils.js for this. 
+export const unit_mappings = {
+  water: 'g',
+  protein: 'g',
+  fat: 'g',
+  fiber: 'g',
+  ash: 'g',
+  starch: 'g',
+  sugars: 'g',
+  proline: 'g',
+  arginine: 'g',
+  histidine: 'g',
+  isoleucine: 'g',
+  leucine: 'g',
+  lysine: 'g',
+  methionine: 'g',
+  cystine: 'g',
+  phenylalanine: 'g',
+  tyrosine: 'g',
+  threonine: 'g',
+  tryptophan: 'g',
+  valine: 'g',
+  glutamic_acid: 'g',
+  aspartic_acid: 'g',
+  glycine: 'g',
+  serine: 'g',
+  alanine: 'g',
+  calcium: 'g',
+  phosphorus: 'g',
+  sodium: 'g',
+  chloride: 'g',
+  potassium: 'g',
+  magnesium: 'mg',
+  sulfur: 'mg',
+  copper: 'mg',
+  iron: 'mg',
+  manganese: 'mg',
+  selenium: 'mg',
+  zinc: 'mg',
+  iodine: 'mg',
+  biotin: 'ug',
+  folate: 'mg',
+  niacin: 'mg',
+  pantothenic_acid: 'mg',
+  pyridoxine: 'mg',
+  riboflavin: 'mg',
+  thiamin: 'mg',
+  vitamin_b12: 'mg',
+  vitamin_d: 'iu',
+  vitamin_e: 'iu',
+  vitamin_k: 'ug',
+  vitamin_a: 'iu',
+  vitamin_c: 'mg',
+  beta_carotene: 'ug',
+  choline: 'mg',
+  linoleic_acid: 'g',
+  linolenic_acid: 'g',
+  arachidonic_acid: 'g',
+  eicosapentaenoic_acid: 'g',
+  docosahexaenoic_acid: 'g',
+  taurine: 'g',
+  metabolic_energy: 'kcal/g',
+  dry_matter: 'g',
+  nitrogen_free_extract: 'g',
+  methionine_cystine: 'g',
+  phenylalanine_tyrosine: 'g',
+  sum_n_3: 'g',
+  sum_n_6: 'g'
+};
+
+/**
+ * @file NutrientSummary.js
+ * @description This file contains the unit mappings for various nutrients directly from foundational foods and the nutrient categories as specified in the db. DO NOT DELETE. 
+ * @module NutrientSummary
+ */
+
+// const unit_mappings = {
+//     water: 'g',
+//     protein: 'g',
+//     fat: 'g',
+//     fiber: 'g',
+//     ash: 'g',
+//     starch: 'g',
+//     sugars: 'g',
+//     proline: 'g',
+//     arginine: 'g',
+//     histidine: 'g',
+//     isoleucine: 'g',
+//     leucine: 'g',
+//     lysine: 'g',
+//     methionine: 'g',
+//     cystine: 'g',
+//     phenylalanine: 'g',
+//     tyrosine: 'g',
+//     threonine: 'g',
+//     tryptophan: 'g',
+//     valine: 'g',
+//     glutamic_acid: 'g',
+//     aspartic_acid: 'g',
+//     glycine: 'g',
+//     serine: 'g',
+//     alanine: 'g',
+//     calcium: 'mg',
+//     phosphorus: 'mg',
+//     sodium: 'mg',
+//     chlorine: 'mg',
+//     potassium: 'mg',
+//     magnesium: 'mg',
+//     sulfur: 'mg',
+//     copper: 'mg',
+//     iron: 'mg',
+//     manganese: 'mg',
+//     selenium: 'ug',
+//     zinc: 'mg',
+//     iodine: 'ug',
+//     biotin: 'ug',
+//     folate: 'ug',
+//     niacin: 'mg',
+//     pantothenic_acid: 'mg',
+//     pyridoxine: 'mg',
+//     riboflavin: 'mg',
+//     thiamin: 'mg',
+//     vitamin_b12: 'ug',
+//     vitamin_d: 'iu',
+//     vitamin_e: 'iu',
+//     vitamin_k: 'ug',
+//     vitamin_a: 'iu',
+//     vitamin_c: 'mg',
+//     beta_carotene: 'ug',
+//     choline: 'mg',
+//     linoleic_acid: 'g',
+//     linolenic_acid: 'g',
+//     arachidonic_acid: 'g',
+//     eicosapentaenoic_acid: 'g',
+//     docosahexaenoic_acid: 'g',
+//     taurine: 'g',
+//     metabolic_energy: 'kcal/g',
+//     dry_matter: 'g',
+//     nitrogen_free_extract: 'g',
+//     methionine_cystine: 'g',
+//     phenylalanine_tyrosine: 'g',
+//     sum_n_3: 'g',
+//     sum_n_6: 'g'
+//   };
   
 const nutrientCategories = {
     proximates: {
@@ -161,6 +239,8 @@ const nutrientCategories = {
         sum_n_6: "Sum N-6",
     },
 };
+const nutrients_mg_to_g = ['calcium', 'phosphorus', 'potassium', 'sodium', 'chloride'];
+const nutrients_iu_to_mg = ['iodine', 'selenium', 'folate', 'vitamin_b12'];
 
 const sumNutrients = (recipe) => {
     const sumNutrients = {};
@@ -193,7 +273,7 @@ const Recipe = ({ recipe }) => {
                     pagination={{ defaultPageSize: 8, hideOnSinglePage: true }}
                     scroll={{ y: 400 }}
                     // overflowY="scroll"
-                    style={{ height: "500px", minHeight: "600px", overflowY: "scroll" }}
+                    // style={{overflowY: "scroll" }}
                     expandable={{
                         expandedRowRender: (record) => {
                             const ingredientColumns = [
@@ -201,10 +281,12 @@ const Recipe = ({ recipe }) => {
                                 { title: "Value", dataIndex: "value", key: "value" },
                                 { title: "Unit", dataIndex: "unit", key: "unit" },
                             ];
+                            console.log(record)
                             const ingredientData = recipe.map((ingredient) => ({
                                 key: ingredient.ingredient.name,
                                 ingredient: ingredient.ingredient.name,
-                                value: parseFloat(ingredient.ingredient[record.key]/100 * ingredient.amount).toFixed(2),
+                                value: parseFloat(ingredient.amount/100 * (nutrients_mg_to_g.includes(record.key) || nutrients_iu_to_mg.includes(record.key) ? ingredient.ingredient[record.key] / 100 : ingredient.ingredient[record.key] / 100)).toFixed(2),
+
                                 unit: unit_mappings[record.key],
                             }));
                             return (
@@ -212,8 +294,8 @@ const Recipe = ({ recipe }) => {
                                     columns={ingredientColumns}
                                     dataSource={ingredientData}
                                     pagination={{ defaultPageSize: 8, hideOnSinglePage: true }}
-                                    scroll={{ y: 400 }}
-                                    overflowY="scroll"
+                                    // scroll={{ y: 400 }}
+                                    // overflowY="scroll"
                 
                                 />
                             );
@@ -230,6 +312,7 @@ const Recipe = ({ recipe }) => {
               { title: "Nutrient", dataIndex: "nutrient", key: "nutrient" },
               { title: "Value", dataIndex: "value", key: "value" },
               { title: "Unit", dataIndex: "unit", key: "unit" },
+
             ];
           };
         
@@ -242,7 +325,7 @@ const Recipe = ({ recipe }) => {
                 .map(([key, value]) => {
                     // NOTE: The amount is divided by 100 because the values are per 100g
                     const nutrientValue = recipe.reduce((sum, ingredient) => {
-                        const ingredientValue = ingredient.ingredient[key];
+                      const ingredientValue = (nutrients_mg_to_g.includes(ingredient.ingredient[key]) || nutrients_iu_to_mg.includes(ingredient.ingredient[key]) ? ingredient.ingredient[key] / 100 : ingredient.ingredient[key] / 100).toFixed(2)
                         const ingredientAmount = ingredient.amount;
                         if (ingredientValue && ingredientAmount) {
                             return sum + (ingredientValue * ingredientAmount) / 100;
@@ -253,8 +336,8 @@ const Recipe = ({ recipe }) => {
                         key: key,
                         nutrient: nutrientCategories[category][key],
                         value: nutrientValue.toFixed(2),
-                        unit: unit_mappings[key],
-                    };
+                        unit: nutrients_mg_to_g.includes(key) ? 'g' : (nutrients_iu_to_mg.includes(key) ? 'mg' : unit_mappings[key]),
+                      };
                 });
           };
     
