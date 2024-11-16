@@ -89,7 +89,7 @@ export default function RecipeGenerator() {
               </Typography.Title>
               <Divider className="mb-10" style={{ borderWidth: 2, borderColor: "black" }} />
 
-                  <IngredientsTable></IngredientsTable>
+                  <IngredientsTable petInfo={{'species':species,'life_stage':lifestage, 'activity_level':activityLevel,'weight':weight}}></IngredientsTable>
                   </div>
                 ) : (
                   <div className="">

@@ -3,7 +3,7 @@ import {Tabs, Table, Typography, Button} from 'antd';
 import { SearchOutlined, DeleteOutlined } from "@ant-design/icons";
 import NutrientSummary from './NutrientSummary';
 import NutrientAnalysis from './NutrientAnalysis';
-const RecipeSummary = ( {currentRecipe, handleDelete}) => {
+const RecipeSummary = ( {currentRecipe, handleDelete, petInfo}) => {
 
     const columns = [
         { title: "Ingredient", dataIndex: "ingredient.name", render: (text, record) => record.ingredient.name },
@@ -33,7 +33,7 @@ const RecipeSummary = ( {currentRecipe, handleDelete}) => {
                     <NutrientSummary recipe={currentRecipe}/>
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Nutrient Analysis" key="3">
-                    <NutrientAnalysis recipe={currentRecipe}/>
+                    <NutrientAnalysis recipe={currentRecipe} petInfo={petInfo}/>
                 </Tabs.TabPane>
 
                 {/* <Tabs.TabPane tab="Nutritional Information" key="2">

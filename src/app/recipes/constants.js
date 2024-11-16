@@ -25,38 +25,38 @@ export const speciesOptions = [
 
 export const activityLevelOptions = [
   {
-    value: "low",
+    value: "Low",
     label: "Low",
   },
   {
-    value: "moderate",
+    value: "Moderate",
     label: "Moderate",
   },
   {
-    value: "high",
+    value: "High",
     label: "High",
   },
   {
-    value: "performance",
+    value: "Performance",
     label: "Performance",
   },
 ];
 
 export const lifeStageOptions = [
   {
-    value: "reproduction",
+    value: "Reproduction",
     label: "Reproduction",
   },
   {
-    value: "growth",
+    value: "Growth",
     label: "Growth",
   },
   {
-    value: "adult",
+    value: "Adult",
     label: "Adult",
   },
   {
-    value: "senior",
+    value: "Senior",
     label: "Senior",
   },
 ];

@@ -2,6 +2,8 @@ import React from 'react';
 import { DownOutlined } from '@ant-design/icons';
 import { Badge, Dropdown, Space, Table, Tabs, Typography, Switch} from 'antd';
 const { Title } = Typography;
+import { NRC, AAFCO, FEDIAF, MAX } from './recommendations';
+
 const items = [
   {
     key: '1',
@@ -236,78 +238,115 @@ const calcAsFed = (recipe) => {
 
 
 
-const Recipe = ({ recipe, format }) => {
-    console.log(recipe);
-
+const Recipe = ({ recipe, format, petInfo}) => {
     const nutrientsFinal = format === 'asFed' ? calcAsFed(recipe) : calcDryMatter(recipe);
 
-        const generateTable = (data, columns) => {
-            return data.length > 0 ? (
-                <Table
-                    dataSource={data}
-                    columns={columns}
-                    pagination={{ defaultPageSize: 8, hideOnSinglePage: true }}
-                    scroll={{ y: 400 }}
-                    // overflowY="scroll"
-                    // style={{overflowY: "scroll" }}
-                />
-            ) : (
-                <Title level={5}>Data not reported</Title>
-            );
-          };
-        
-          const generateColumns = () => {
-            return [
-              { title: "Nutrient", dataIndex: "nutrient", key: "nutrient" },
-              { title: "Value", dataIndex: "value", key: "value" },
-              { title: "Unit", dataIndex: "unit", key: "unit" },
+    const species = petInfo.petInfo['species'][0];
+    // anything not growth or reproduction, defaults to maintenance 
+    const life_stage = petInfo.petInfo['life_stage'] !== 'growth' && petInfo.petInfo['life_stage'] !== 'reproduction' ? 'Maintenance' : petInfo.petInfo['life_stage'];
+    const activity_level = petInfo.petInfo['activity_level'][0];
 
-            ];
-          };
-        
-          const generateData = (category, nutrientsFinal) => {
-            return Object.entries(nutrientsFinal)
-                .filter(
-                    ([key, value]) =>
-                        nutrientCategories[category].hasOwnProperty(key) && value !== null
-                )
-                .map(([key, value]) => {
-                    // NOTE: The amount is divided by 100 because the values are per 100g
-                    return {
-                        key: key,
-                        nutrient: nutrientCategories[category][key],
-                        value: ratios.includes(key) ? `${nutrientsFinal[key].toFixed(2)}:1` : nutrientsFinal[key].toFixed(2),
-                        unit: unit_mappings[key],
-                    };
-                });
-          };
-    
-          return (
-            <div>
-              <Tabs defaultActiveKey="1"
-                items={[
-                  ...Object.entries(nutrientCategories).map(
-                    ([category], index) => ({
-                      label: category.toUpperCase(),
-                      key: index,
-                      children: generateTable(
-                        generateData(
-                          category,
-                          nutrientsFinal,
-                        ),
-                        generateColumns()
-                      )
-                    })
-                  )
-                ]}
-              />
-            </div>
-          );
-      
-      
+    const generateTable = (data, columns) => {
+        return data.length > 0 ? (
+            <Table
+                dataSource={data}
+                columns={columns}
+                pagination={{ defaultPageSize: 8, hideOnSinglePage: true }}
+                scroll={{ y: 400 }}
+            />
+        ) : (
+            <Title level={5}>Data not reported</Title>
+        );
     };
+  
+    const generateColumns = () => {
+        return [
+            { title: "Nutrient", dataIndex: "nutrient", key: "nutrient" },
+            { title: "Value", dataIndex: "value", key: "value" },
+            { title: "NRC", dataIndex: "nrc", key: "nrc",      render: (text) => ({
+                children: text || '-',
+                props: {
+                //   style: { backgroundColor: text ? 'inherit' : '#000000' }, // Change color if empty
+                },
+              })},
+            { title: "FEDIAF", dataIndex: "fediaf", key: "fediaf",      render: (text) => ({
+                children: text || '-',
+                props: {
+                //   style: { backgroundColor: text ? 'inherit' : '#000000' }, // Change color if empty
+                },
+              })},
+            { title: "AAFCO", dataIndex: "aafco", key: "aafco",      render: (text) => ({
+                children: text || '-',
+                props: {
+                //   style: { backgroundColor: text ? 'inherit' : '#000000' }, // Change color if empty
+                },
+              })},
+            { title: "Maximum", dataIndex: "maximum", key: "maximum",     render: (text) => ({
+                children: text || '-',
+                props: {
+                //   style: { backgroundColor: text ? 'inherit' : '#000000' }, // Change color if empty
+                },
+              }),
+          },
+            { title: "Unit", dataIndex: "unit", key: "unit" },
+        ];
+    };
+  
+    const generateData = (category, nutrientsFinal, species, life_stage, activity_level) => {
+        console.log(species, activity_level, life_stage )
+        return Object.entries(nutrientsFinal)
+            .filter(
+                ([key, value]) =>
+                    nutrientCategories[category].hasOwnProperty(key) && value !== null
+            )
+            .map(([key, value]) => {
+                // NOTE: The amount is divided by 100 because the values are per 100g
+                return {
+                    key: key,
+                    nutrient: nutrientCategories[category][key],
+                    value: nutrientsFinal[key].toFixed(2),
+                    nrc: NRC[species][life_stage][key],
+                    fediaf: FEDIAF[species][activity_level === 'Low' && life_stage !== 'Growth' && life_stage !== 'Reproduction' ? 'Low' : life_stage][key],
+                    aafco: AAFCO[species][life_stage][key],
+                    maximum: MAX[species][life_stage][key], 
+                    unit: unit_mappings[key],
+                };
+            });
+    };
+
+    return (
+        <div>
+            <Tabs defaultActiveKey="1"
+                items={[
+                    ...Object.entries(nutrientCategories).map(
+                        ([category], index) => ({
+                            label: category.toUpperCase(),
+                            key: index,
+                            children: generateTable(
+                                generateData(
+                                    category,
+                                    nutrientsFinal,
+                                    species, life_stage, activity_level
+                                ),
+                                generateColumns()
+                            )
+                        })
+                    )
+                ]}
+            />
+        </div>
+    );
+};
     
-const NutrientAnalysis = ({ recipe }) => {
+const NutrientAnalysis = ({ recipe,petInfo}) => {
+
+    if (recipe.length == 0){
+        return <Title level={5}>Please add ingredients to view nutrient analysis</Title>;
+    }
+    if (!petInfo.petInfo.species || !petInfo.petInfo.life_stage || !petInfo.petInfo.activity_level || !petInfo.petInfo.weight){ 
+        return <Title level={5}>Please provide information about Pet for a detailed analysis breakdown</Title>;
+    }
+
     const [format, setFormat] = React.useState('dryMatter');
 
     const handleFormatChange = (selectedFormat) => {
@@ -325,7 +364,7 @@ const NutrientAnalysis = ({ recipe }) => {
                         onChange={(checked) => handleFormatChange(checked ? 'dryMatter' : 'asFed')}
                     />
                 </div>
-                {Recipe({ recipe, format })}
+                {Recipe({ recipe, format, petInfo})}
             </div>
         </>
     );

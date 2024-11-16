@@ -9,7 +9,7 @@ import RecipeSummary from "./RecipeSummary";
 const { Title } = Typography;
 import { Flex, Spin } from 'antd';
 
-const IngredientsTable = () => {
+const IngredientsTable = (petInfo) => {
   const [dataSource, setDataSource] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [searchText, setSearchText] = useState("");
@@ -398,7 +398,7 @@ const IngredientsTable = () => {
         className="modal"
       >
         <Title level={3}>Current Recipe</Title>
-        <RecipeSummary currentRecipe = {currentRecipe} handleDelete={handleDelete}></RecipeSummary>
+        <RecipeSummary currentRecipe = {currentRecipe} petInfo={petInfo} handleDelete={handleDelete}></RecipeSummary>
         {/* <Table
           dataSource={currentRecipe}
           columns={[
