@@ -38,9 +38,6 @@ const NutrientDashBoard = ({ recipe}) => {
                         height={"100%"}
                     />
                 </div>
-                <div className='border border-black p-4'>
-                    Coming Soon
-                </div>
             </div>
         </>
     );
