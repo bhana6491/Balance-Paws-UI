@@ -379,6 +379,7 @@ return (
 };
     
 const NutrientAnalysis = ({ recipe,petInfo}) => {
+    const [format, setFormat] = React.useState('dryMatter');
 
     if (recipe.length == 0){
         return <Title level={5}>Please add ingredients to view nutrient analysis</Title>;
@@ -387,7 +388,6 @@ const NutrientAnalysis = ({ recipe,petInfo}) => {
         return <Title level={5}>Please provide information about Pet for a detailed analysis breakdown</Title>;
     }
 
-    const [format, setFormat] = React.useState('dryMatter');
 
     const handleFormatChange = (selectedFormat) => {
         setFormat(selectedFormat);
