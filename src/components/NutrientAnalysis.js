@@ -3,7 +3,10 @@ import { DownOutlined } from '@ant-design/icons';
 import { Badge, Dropdown, Space, Table, Tabs, Typography, Switch} from 'antd';
 const { Title } = Typography;
 import { NRC, AAFCO, FEDIAF, MAX } from './recommendations';
-
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import {FileExcelFilled} from '@ant-design/icons';
+import {generateNutrientCompositionData, compositionCategories, nutrients_iu_to_mg, nutrients_mg_to_g} from './NutrientSummary'
 const items = [
   {
     key: '1',
@@ -98,7 +101,7 @@ const unit_mappings = {
 //     ratio: [calcium_phosphorus, omega_6_3]
 //   }
   
-const nutrientCategories = {
+const analysisCategories = {
     macronutrients: {
     metabolic_energy: 'Metabolic Energy',
     protein: 'Protein',
@@ -165,6 +168,26 @@ const nutrientCategories = {
 
 const ratios = ['calcium_phosphorus', 'omega_6_3'];
 
+const exportToExcel = (analysis, composition, analysis_basis) => {
+    // Prepare the data for export
+    const analysisData = analysis.map(({ key, ...item }) => item);
+    // const compositionData = composition.map(({ key, ...item }) => item);
+
+    // Create a new workbook and worksheet
+    const workbook = XLSX.utils.book_new();
+    const analysis_worksheet = XLSX.utils.json_to_sheet(analysisData);
+    // const composition_worksheet = XLSX.utils.json_to_sheet(compositionData);
+
+    // Append the worksheet to the workbook
+    XLSX.utils.book_append_sheet(workbook, analysis_worksheet, (analysis_basis === 'asFed' ? 'Nutrient Analysis - As Fed' : 'Nutrient Analysis - Dry Matter'));
+    // XLSX.utils.book_append_sheet(workbook, composition_worksheet, 'Nutrient Composition');
+
+    // Write the Excel file and trigger a download
+    const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+    saveAs(blob, 'Recipe.xlsx');
+  };
+
 const calcDryMatter = (recipe) => {
 
     const totalDryMatter = recipe.reduce((sum, ingredient) => {
@@ -178,8 +201,8 @@ const calcDryMatter = (recipe) => {
 
     const dryMatter = {};
 
-    for (const nutrientCategory in nutrientCategories) {
-        for (const nutrient in nutrientCategories[nutrientCategory]) {
+    for (const nutrientCategory in analysisCategories) {
+        for (const nutrient in analysisCategories[nutrientCategory]) {
             var total = 0;
             for (const ingredient of recipe) {
                 if (ingredient.ingredient[nutrient]) {
@@ -212,8 +235,8 @@ const calcAsFed = (recipe) => {
 
     const asFed = {};
 
-    for (const nutrientCategory in nutrientCategories) {
-        for (const nutrient in nutrientCategories[nutrientCategory]) {
+    for (const nutrientCategory in analysisCategories) {
+        for (const nutrient in analysisCategories[nutrientCategory]) {
             var total = 0;
             for (const ingredient of recipe) {
                 if (ingredient.ingredient[nutrient]) {
@@ -228,7 +251,6 @@ const calcAsFed = (recipe) => {
 
         }
     }
-    
     // Custom adjustments needed for certain nutrients
     asFed.metabolic_energy = ((asFed.protein * 4) + (asFed.fat * 9) + (asFed.nitrogen_free_extract * 4)) * 10;
     asFed.epa_dha = (asFed.eicosapentaenoic_acid || 0) + (asFed.docosahexaenoic_acid || 0); //Don't have recalc dry matter version, already dry matter
@@ -292,18 +314,18 @@ const Recipe = ({ recipe, format, petInfo}) => {
         ];
     };
   
-    const generateData = (category, nutrientsFinal, species, life_stage, activity_level) => {
+    const generateNutrientAnalysisData = (category, nutrientsFinal, species, life_stage, activity_level) => {
         console.log(species, activity_level, life_stage )
         return Object.entries(nutrientsFinal)
             .filter(
                 ([key, value]) =>
-                    nutrientCategories[category].hasOwnProperty(key) && value !== null
+                    analysisCategories[category].hasOwnProperty(key) && value !== null
             )
             .map(([key, value]) => {
                 // NOTE: The amount is divided by 100 because the values are per 100g
                 return {
                     key: key,
-                    nutrient: nutrientCategories[category][key],
+                    nutrient: analysisCategories[category][key],
                     value: nutrientsFinal[key].toFixed(2),
                     nrc: NRC[species][life_stage][key],
                     fediaf: FEDIAF[species][activity_level === 'Low' && life_stage !== 'Growth' && life_stage !== 'Reproduction' ? 'Low' : life_stage][key],
@@ -313,29 +335,47 @@ const Recipe = ({ recipe, format, petInfo}) => {
                 };
             });
     };
-
-    return (
-        <div>
-            <Tabs defaultActiveKey="1"
-                items={[
-                    ...Object.entries(nutrientCategories).map(
-                        ([category], index) => ({
-                            label: category.toUpperCase(),
-                            key: index,
-                            children: generateTable(
-                                generateData(
-                                    category,
-                                    nutrientsFinal,
-                                    species, life_stage, activity_level
-                                ),
-                                generateColumns()
-                            )
-                        })
-                    )
-                ]}
-            />
-        </div>
+    const data = Object.entries(analysisCategories).map(
+        ([category], index) => ({
+            label: category.toUpperCase(), // Capitalize category for the label
+            key: index, // Assign a unique key based on the index
+            children: generateTable(
+                generateNutrientAnalysisData(
+                    category,
+                    nutrientsFinal,
+                    species,
+                    life_stage,
+                    activity_level
+                ),
+                generateColumns()
+            )
+        })
     );
+    const analysisFinal = [];
+    // const compositionFinal = [];
+    const categories = ['macronutrients', 'protein', 'fat', 'carbohydrates', 'minerals', 'vitamins'];
+
+    for (const category of categories) {
+        const analysisData = generateNutrientAnalysisData(category, nutrientsFinal, species, life_stage, activity_level);
+        analysisFinal.push(...analysisData);
+    }
+    // FIGURE OUT THE NESTING AFTER 
+//     Object.keys(compositionCategories).forEach(category => {
+//         const compositionData = generateNutrientCompositionData(category, recipe);
+//         compositionFinal.push(...compositionData);    
+// });
+
+
+return (
+    <div>
+        <div style={{ textAlign: 'right' }}>
+            <button onClick={() => exportToExcel(analysisFinal, null, format)}>
+                <FileExcelFilled style={{ fontSize: '24px' }} />
+            </button>
+        </div>
+        <Tabs defaultActiveKey="1" items={data} />
+    </div>
+);
 };
     
 const NutrientAnalysis = ({ recipe,petInfo}) => {

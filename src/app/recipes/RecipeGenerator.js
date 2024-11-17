@@ -73,7 +73,7 @@ export default function RecipeGenerator() {
               />
               <InputNumber
                 min={1}
-                max={10}
+                max={200}
                 placeholder="Ideal Weight (kg)"
                 className="mt-5 border-black border-2 rounded-lg"
                 style={{ width: "10%" }}

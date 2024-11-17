@@ -159,7 +159,7 @@ export const unit_mappings = {
 //     sum_n_6: 'g'
 //   };
   
-const nutrientCategories = {
+export const compositionCategories = {
     proximates: {
         metabolic_energy: "Metabolic Energy",
         water: "Water",
@@ -239,14 +239,15 @@ const nutrientCategories = {
         sum_n_6: "Sum N-6",
     },
 };
-const nutrients_mg_to_g = ['calcium', 'phosphorus', 'potassium', 'sodium', 'chloride'];
-const nutrients_iu_to_mg = ['iodine', 'selenium', 'folate', 'vitamin_b12'];
+// TODO - DO THIS IN THE DATABASE 
+export const nutrients_mg_to_g = ['calcium', 'phosphorus', 'potassium', 'sodium', 'chloride'];
+export const nutrients_iu_to_mg = ['iodine', 'selenium', 'folate', 'vitamin_b12'];
 
-const sumNutrients = (recipe) => {
+export const sumNutrients = (recipe) => {
     const sumNutrients = {};
 
-    for (const nutrientCategory in nutrientCategories) {
-        for (const nutrient in nutrientCategories[nutrientCategory]) {
+    for (const nutrientCategory in compositionCategories) {
+        for (const nutrient in compositionCategories[nutrientCategory]) {
             for (const ingredient of recipe) {
                 if (ingredient.ingredient[nutrient]) {
                     if (!sumNutrients[nutrient]) {
@@ -260,11 +261,37 @@ const sumNutrients = (recipe) => {
     return sumNutrients;
 };
 
+// Outside of the Recipe Because it will be imported in NutrientAnalysis.js in order to generate a holistic nutrient analysis excel sheet. 
+export const generateNutrientCompositionData = (category, recipe) => {
+  return Object.entries(sumNutrients(recipe))
+      .filter(
+          ([key, value]) =>
+              compositionCategories[category].hasOwnProperty(key) && value !== null
+      )
+      .map(([key, value]) => {
+          // NOTE: The amount is divided by 100 because the values are per 100g
+          const nutrientValue = recipe.reduce((sum, ingredient) => {
+            // TODO: PUT THIS LOGIC IN THE SCRIPT BEFORE INSERTINGING INTO DB 
+            const ingredientValue = (nutrients_mg_to_g.includes(ingredient.ingredient[key]) || nutrients_iu_to_mg.includes(ingredient.ingredient[key]) ? ingredient.ingredient[key] / 100 : ingredient.ingredient[key]).toFixed(2)
+              const ingredientAmount = ingredient.amount;
+              if (ingredientValue && ingredientAmount) {
+                  return sum + ((ingredientAmount/100)*ingredientValue);
+              }
+              return sum;
+          }, 0);
+          return {
+              key: key,
+              nutrient: compositionCategories[category][key],
+              value: nutrientValue.toFixed(2),
+              //TODO: PUT THIS LOGIC IN THE SCRIPT BEFORE INSERTINGING INTO DB 
+              unit: nutrients_mg_to_g.includes(key) ? 'g' : (nutrients_iu_to_mg.includes(key) ? 'mg' : unit_mappings[key]),
+            };
+      });
+};
+
+
+
 const Recipe = ({ recipe }) => {
-    console.log(recipe);
-
-        const nutrientsFinal = sumNutrients(recipe);
-
         const generateTable = (data, columns) => {
             return data.length > 0 ? (
                 <Table
@@ -285,8 +312,7 @@ const Recipe = ({ recipe }) => {
                             const ingredientData = recipe.map((ingredient) => ({
                                 key: ingredient.ingredient.name,
                                 ingredient: ingredient.ingredient.name,
-                                value: parseFloat(ingredient.amount/100 * (nutrients_mg_to_g.includes(record.key) || nutrients_iu_to_mg.includes(record.key) ? ingredient.ingredient[record.key] / 100 : ingredient.ingredient[record.key] / 100)).toFixed(2),
-
+                                value: parseFloat(ingredient.amount/100 * (nutrients_mg_to_g.includes(record.key) || nutrients_iu_to_mg.includes(record.key) ? ingredient.ingredient[record.key] / 100 : ingredient.ingredient[record.key])).toFixed(2),
                                 unit: unit_mappings[record.key],
                             }));
                             return (
@@ -316,43 +342,18 @@ const Recipe = ({ recipe }) => {
             ];
           };
         
-          const generateData = (category, nutrientsFinal) => {
-            return Object.entries(nutrientsFinal)
-                .filter(
-                    ([key, value]) =>
-                        nutrientCategories[category].hasOwnProperty(key) && value !== null
-                )
-                .map(([key, value]) => {
-                    // NOTE: The amount is divided by 100 because the values are per 100g
-                    const nutrientValue = recipe.reduce((sum, ingredient) => {
-                      const ingredientValue = (nutrients_mg_to_g.includes(ingredient.ingredient[key]) || nutrients_iu_to_mg.includes(ingredient.ingredient[key]) ? ingredient.ingredient[key] / 100 : ingredient.ingredient[key] / 100).toFixed(2)
-                        const ingredientAmount = ingredient.amount;
-                        if (ingredientValue && ingredientAmount) {
-                            return sum + (ingredientValue * ingredientAmount) / 100;
-                        }
-                        return sum;
-                    }, 0);
-                    return {
-                        key: key,
-                        nutrient: nutrientCategories[category][key],
-                        value: nutrientValue.toFixed(2),
-                        unit: nutrients_mg_to_g.includes(key) ? 'g' : (nutrients_iu_to_mg.includes(key) ? 'mg' : unit_mappings[key]),
-                      };
-                });
-          };
-    
           return (
             <div>
               <Tabs defaultActiveKey="1"
                 items={[
-                  ...Object.entries(nutrientCategories).map(
+                  ...Object.entries(compositionCategories).map(
                     ([category], index) => ({
                       label: category.toUpperCase(),
                       key: index,
                       children: generateTable(
-                        generateData(
+                        generateNutrientCompositionData(
                           category,
-                          nutrientsFinal,
+                          recipe
                         ),
                         generateColumns()
                       )
