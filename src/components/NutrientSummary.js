@@ -272,6 +272,9 @@ export const generateNutrientCompositionData = (category, recipe) => {
           // NOTE: The amount is divided by 100 because the values are per 100g
           const nutrientValue = recipe.reduce((sum, ingredient) => {
             // TODO: PUT THIS LOGIC IN THE SCRIPT BEFORE INSERTINGING INTO DB 
+            if (!ingredient.ingredient[key]){
+              return 0
+            }
             const ingredientValue = (nutrients_mg_to_g.includes(ingredient.ingredient[key]) || nutrients_iu_to_mg.includes(ingredient.ingredient[key]) ? ingredient.ingredient[key] / 100 : ingredient.ingredient[key]).toFixed(2)
               const ingredientAmount = ingredient.amount;
               if (ingredientValue && ingredientAmount) {
@@ -312,7 +315,7 @@ const Recipe = ({ recipe }) => {
                             const ingredientData = recipe.map((ingredient) => ({
                                 key: ingredient.ingredient.name,
                                 ingredient: ingredient.ingredient.name,
-                                value: parseFloat(ingredient.amount/100 * (nutrients_mg_to_g.includes(record.key) || nutrients_iu_to_mg.includes(record.key) ? ingredient.ingredient[record.key] / 100 : ingredient.ingredient[record.key])).toFixed(2),
+                                value: parseFloat(ingredient.amount/100 * ((nutrients_mg_to_g.includes(record.key) || nutrients_iu_to_mg.includes(record.key)) ? ingredient.ingredient[record.key] / 100 : ingredient.ingredient[record.key])).toFixed(2),
                                 unit: unit_mappings[record.key],
                             }));
                             return (
