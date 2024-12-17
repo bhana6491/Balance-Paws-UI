@@ -8,6 +8,7 @@ import {NutrientsTable} from "./utils";
 import RecipeSummary from "./RecipeSummary";
 const { Title } = Typography;
 import { Flex, Spin } from 'antd';
+import { revalidatePath } from "next/cache";
 
 const IngredientsTable = (petInfo) => {
   const [dataSource, setDataSource] = useState([]);
@@ -270,13 +271,32 @@ const IngredientsTable = (petInfo) => {
     },
   ];
   useEffect(() => {
-    // Make API request here and update the dataSource state
-    fetch(
-      "https://2kj1u5y1yh.execute-api.us-east-1.amazonaws.com/Testing/ingredients"
-    )
-      .then((response) => response.json())
-      .then((data) => setDataSource(JSON.parse(data.body)));
+    const fetchData = () => {
+      try {
+        const cachedData = sessionStorage.getItem("ingredientsData");
+        if (cachedData) {
+          setDataSource(JSON.parse(cachedData));
+        } else {
+          fetch(
+            "https://2kj1u5y1yh.execute-api.us-east-1.amazonaws.com/Testing/ingredients",
+          )
+            .then(response => response.json())
+            .then(data => {
+              setDataSource(JSON.parse(data.body));
+              sessionStorage.setItem("ingredientsData", data.body);
+            })
+            .catch(error => {
+              console.error("Error fetching data:", error);
+            });
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
+  // setDataSource(JSON.parse(data.body));
 
   while (!dataSource || dataSource.length === 0) {
     return (
