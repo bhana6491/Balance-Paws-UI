@@ -329,10 +329,16 @@ const IngredientsTable = (petInfo) => {
             onClick: () => handleRowClick(record),
           })}
           scroll={{ y: 385 }}
-          style={{ height: "500px", minHeight: "500px" }}
+          style={{ height: "500px", minHeight: "500px" }
+        }
+        pagination={{
+          pageSize:50,
+          showSizeChanger:false
+        }}
+
         />
       </div>
-
+      {/* <Pagination size="small" total={50} /> */}
       {selectedRow && (
         <div className="w-80">
           <Modal
