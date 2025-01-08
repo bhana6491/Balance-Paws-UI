@@ -242,23 +242,20 @@ export const compositionCategories = {
 // TODO - DO THIS IN THE DATABASE 
 export const nutrients_mg_to_g = ['calcium', 'phosphorus', 'potassium', 'sodium', 'chloride'];
 export const nutrients_iu_to_mg = ['iodine', 'selenium', 'folate', 'vitamin_b12'];
-
 export const sumNutrients = (recipe) => {
-    const sumNutrients = {};
+  const sumNutrients = {};
 
-    for (const nutrientCategory in compositionCategories) {
-        for (const nutrient in compositionCategories[nutrientCategory]) {
-            for (const ingredient of recipe) {
-                if (ingredient.ingredient[nutrient]) {
-                    if (!sumNutrients[nutrient]) {
-                        sumNutrients[nutrient] = 0;
-                    }
-                    sumNutrients[nutrient] += ingredient.ingredient[nutrient];
-                }
-            }
-        }
+  for (const nutrientCategory in compositionCategories) {
+    for (const nutrient in compositionCategories[nutrientCategory]) {
+      for (const ingredient of recipe) {
+        const ingredientNutrient = ingredient.ingredient[nutrient] || 0;
+          sumNutrients[nutrient] += ingredientNutrient;
+        
+      }
     }
-    return sumNutrients;
+  }
+
+  return sumNutrients;
 };
 
 // Outside of the Recipe Because it will be imported in NutrientAnalysis.js in order to generate a holistic nutrient analysis excel sheet. 
@@ -273,7 +270,7 @@ export const generateNutrientCompositionData = (category, recipe) => {
           const nutrientValue = recipe.reduce((sum, ingredient) => {
             // TODO: PUT THIS LOGIC IN THE SCRIPT BEFORE INSERTINGING INTO DB 
             if (!ingredient.ingredient[key]){
-              return 0
+              return sum
             }
             const ingredientValue = (nutrients_mg_to_g.includes(ingredient.ingredient[key]) || nutrients_iu_to_mg.includes(ingredient.ingredient[key]) ? ingredient.ingredient[key] / 100 : ingredient.ingredient[key]).toFixed(2)
               const ingredientAmount = ingredient.amount;
