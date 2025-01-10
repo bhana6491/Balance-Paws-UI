@@ -44,7 +44,7 @@ export const unit_mappings = {
   calcium: 'g',
   phosphorus: 'g',
   sodium: 'g',
-  chlorine: 'g',
+  chloride: 'g',
   potassium: 'g',
   magnesium: 'mg',
   sulfur: 'mg',
@@ -119,7 +119,7 @@ export const unit_mappings = {
 //     calcium: 'mg',
 //     phosphorus: 'mg',
 //     sodium: 'mg',
-//     chlorine: 'mg',
+//     chloride: 'mg',
 //     potassium: 'mg',
 //     magnesium: 'mg',
 //     sulfur: 'mg',
@@ -173,6 +173,7 @@ export const compositionCategories = {
     carbohydrates: {
         starch: "Starch",
         sugars: "Sugars",
+        fiber: "Fiber"
     },
     aminoAcids: {
         proline: "Proline",
@@ -200,7 +201,7 @@ export const compositionCategories = {
         calcium: "Calcium",
         phosphorus: "Phosphorus",
         sodium: "Sodium",
-        chlorine: "Chlorine",
+        chloride: "Chloride",
         potassium: "Potassium",
         magnesium: "Magnesium",
         sulfur: "Sulfur",
@@ -249,8 +250,10 @@ export const sumNutrients = (recipe) => {
     for (const nutrient in compositionCategories[nutrientCategory]) {
       for (const ingredient of recipe) {
         const ingredientNutrient = ingredient.ingredient[nutrient] || 0;
-          sumNutrients[nutrient] += ingredientNutrient;
-        
+        if (sumNutrients[nutrient] === undefined) {
+          sumNutrients[nutrient] = 0;
+        }
+        sumNutrients[nutrient] += ingredientNutrient;
       }
     }
   }
