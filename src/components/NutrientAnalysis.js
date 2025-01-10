@@ -64,10 +64,10 @@ const unit_mappings = {
     riboflavin: 'mg/kg',
     thiamin: 'mg/kg',
     vitamin_b12: 'mg/kg',
-    vitamin_d: 'IU',
-    vitamin_e: 'IU',
+    vitamin_d: 'IU/kg',
+    vitamin_e: 'IU/kg',
     vitamin_k: 'ug',
-    vitamin_a: 'IU',
+    vitamin_a: 'IU/kg',
     vitamin_c: 'mg',
     beta_carotene: 'ug',
     choline: 'mg/kg',
@@ -154,15 +154,14 @@ const analysisCategories = {
         vitamin_a:'Vitamin A',
         vitamin_d:'Vitamin D',
         vitamin_e:'Vitamin E',
-        thiamin:'Thiamin',
-        riboflavin:'Riboflavin',
-        pantothenic_acid:'Pantothenic acid',
-        niacin:'Niacin',
-        pyridoxine:'Pyridoxine',
-        folate:'Folic acid',
-        vitamin_b12:'Vitamin B12',
+        thiamin:'Thiamin, B1',
+        riboflavin:'Riboflavin, B2',
+        pantothenic_acid:'Pantothenic Acid, B5',
+        niacin:'Niacin, B3',
+        pyridoxine:'Pyridoxine, B6',
+        folate:'Folic Acid, B9',
+        vitamin_b12:'Cobalamin, B12',
         choline:'Choline',
-        vitamin_c:'Vitamin C',
     },
 };
 
@@ -274,7 +273,7 @@ const Recipe = ({ recipe, format, petInfo}) => {
                 dataSource={data}
                 columns={columns}
                 pagination={{ defaultPageSize: 8, hideOnSinglePage: true }}
-                scroll={{ y: 400 }}
+                scroll={{ y: 350 }}
             />
         ) : (
             <Title level={5}>Data not reported</Title>
@@ -326,12 +325,12 @@ const Recipe = ({ recipe, format, petInfo}) => {
                 return {
                     key: key,
                     nutrient: analysisCategories[category][key],
-                    value: nutrientsFinal[key].toFixed(2),
+                    value: ratios.includes(key) ? `${nutrientsFinal[key].toFixed(2)}:1` : nutrientsFinal[key].toFixed(2),
                     nrc: NRC[species][life_stage][key],
                     fediaf: FEDIAF[species][activity_level === 'Low' && life_stage !== 'Growth' && life_stage !== 'Reproduction' ? 'Low' : life_stage][key],
                     aafco: AAFCO[species][life_stage][key],
                     maximum: MAX[species][life_stage][key], 
-                    unit: unit_mappings[key],
+                    unit: ratios.includes(key) ? '' : unit_mappings[key],
                 };
             });
     };
@@ -395,7 +394,7 @@ const NutrientAnalysis = ({ recipe,petInfo}) => {
 
     return (
         <>
-            <div className=''>
+            <div className='' style={{ marginBottom: '100px' }}>
                 <div>
                     <Switch
                         checkedChildren='Dry Matter'

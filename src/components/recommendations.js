@@ -16,10 +16,11 @@ export const AAFCO = {
             valine: 0.68,
             TSAA: 0.7,
             AAA: 1.3,
+            omega_6_3: '30:1',
             calcium: 1.2,
             phosphorus: 1,
             sodium: 0.3,
-            chlorine: 0.45,
+            chloride: 0.45,
             potassium: 0.6,
             magnesium: 0.06,
             copper: 12.4,
@@ -41,7 +42,8 @@ export const AAFCO = {
             choline: 1360,
             linoleic_acid: 1.3,
             linolenic_acid: 0.08,
-            epa_dha: 0.05
+            epa_dha: 0.05, 
+            calcium_phosphorus: "1:1"
         },
         Maintenance: {
             protein: 18,
@@ -59,10 +61,11 @@ export const AAFCO = {
             valine: 0.49,
             TSAA: 0.65,
             AAA: 0.74,
+            omega_6_3: '30:1',
             calcium: 0.5,
             phosphorus: 0.4,
             sodium: 0.08,
-            chlorine: 0.12,
+            chloride: 0.12,
             potassium: 0.6,
             magnesium: 0.06,
             copper: 7.3,
@@ -82,7 +85,9 @@ export const AAFCO = {
             vitamin_d: 500,
             vitamin_e: 50,
             choline: 1360,
-            linoleic_acid: 1.1
+            linoleic_acid: 1.1,
+            calcium_phosphorus: "1:1"
+
         },
         Reproduction: {
             protein: 22.5,
@@ -100,10 +105,11 @@ export const AAFCO = {
             valine: 0.68,
             TSAA: 0.7,
             AAA: 1.3,
+            omega_6_3: '30:1',
             calcium: 1.2,
             phosphorus: 1,
             sodium: 0.4,
-            chlorine: 0.45,
+            chloride: 0.45,
             potassium: 0.6,
             magnesium: 0.06,
             copper: 12.4,
@@ -125,7 +131,9 @@ export const AAFCO = {
             choline: 1360,
             linoleic_acid: 1.3,
             linolenic_acid: 0.08,
-            epa_dha: 0.05
+            epa_dha: 0.05,
+            calcium_phosphorus: "1:1"
+
         }
     },
     Cat: {
@@ -146,10 +154,11 @@ export const AAFCO = {
             taurine: 0.2,
             TSAA: 1.1,
             AAA: 1.92,
+            omega_6_3: '30:1',
             calcium: 1,
             phosphorus: 0.8,
             sodium: 0.2,
-            chlorine: 0.3,
+            chloride: 0.3,
             potassium: 0.6,
             magnesium: 0.08,
             copper: 8.4,
@@ -174,7 +183,8 @@ export const AAFCO = {
             linoleic_acid: 0.6,
             linolenic_acid: 0.02,
             arachidonic_acid: 0.02,
-            epa_dha: 0.012
+            epa_dha: 0.012,
+            calcium_phosphorus: "1:1"
         },
         Maintenance: {
             protein: 26,
@@ -193,10 +203,11 @@ export const AAFCO = {
             taurine: 0.2,
             TSAA: 0.4,
             AAA: 1.53,
+            omega_6_3: '30:1',
             calcium: 0.6,
             phosphorus: 0.5,
             sodium: 0.2,
-            chlorine: 0.3,
+            chloride: 0.3,
             potassium: 0.6,
             magnesium: 0.04,
             copper: 5,
@@ -219,7 +230,8 @@ export const AAFCO = {
             vitamin_k: 0.1,
             choline: 2400,
             linoleic_acid: 0.6,
-            arachidonic_acid: 0.02
+            arachidonic_acid: 0.02,
+            calcium_phosphorus: "1:1"
         },
         Reproduction: {
             protein: 30,
@@ -238,10 +250,11 @@ export const AAFCO = {
             taurine: 0.2,
             TSAA: 1.1,
             AAA: 1.92,
+            omega_6_3: '30:1',
             calcium: 1,
             phosphorus: 0.8,
             sodium: 0.2,
-            chlorine: 0.3,
+            chloride: 0.3,
             potassium: 0.6,
             magnesium: 0.08,
             copper: 8.4,
@@ -266,7 +279,8 @@ export const AAFCO = {
             linoleic_acid: 0.6,
             linolenic_acid: 0.02,
             arachidonic_acid: 0.02,
-            epa_dha: 0.01
+            epa_dha: 0.01,
+            calcium_phosphorus: "1:1"
         }
     }
 };
@@ -291,7 +305,7 @@ export const FEDIAF = {
                 calcium: 1,
                 phosphorus: 0.9,
                 sodium: 0.22,
-                chlorine: 0.33,
+                chloride: 0.33,
                 potassium: 0.44,
                 magnesium: 0.04,
                 copper: 11,
@@ -313,7 +327,8 @@ export const FEDIAF = {
                 choline: 1700,
                 linoleic_acid: 1.3,
                 linolenic_acid: 0.08,
-                epa_dha: 0.05
+                epa_dha: 0.05,
+                calcium_phosphorus: "1:1"
             },
             Maintenance: {
                 protein: 18,
@@ -334,7 +349,7 @@ export const FEDIAF = {
                 calcium: 0.5,
                 phosphorus: 0.4,
                 sodium: 0.1,
-                chlorine: 0.15,
+                chloride: 0.15,
                 potassium: 0.5,
                 magnesium: 0.07,
                 copper: 7.2,
@@ -354,7 +369,9 @@ export const FEDIAF = {
                 vitamin_d: 552,
                 vitamin_e: 36,
                 choline: 1700,
-                linoleic_acid: 1.32
+                linoleic_acid: 1.32,
+                calcium_phosphorus: "1:1"
+
             },
             Reproduction: {
                 protein: 25,
@@ -375,7 +392,7 @@ export const FEDIAF = {
                 calcium: 1,
                 phosphorus: 0.9,
                 sodium: 0.22,
-                chlorine: 0.33,
+                chloride: 0.33,
                 potassium: 0.44,
                 magnesium: 0.04,
                 copper: 11,
@@ -397,7 +414,9 @@ export const FEDIAF = {
                 choline: 1700,
                 linoleic_acid: 1.3,
                 linolenic_acid: 0.08,
-                epa_dha: 0.05
+                epa_dha: 0.05,
+                calcium_phosphorus: "1:1"
+
             },
             Low: {
                 protein: 21,
@@ -416,7 +435,7 @@ export const FEDIAF = {
                 calcium: 0.58,
                 phosphorus: 0.46,
                 sodium: 0.12,
-                chlorine: 0.17,
+                chloride: 0.17,
                 potassium: 0.58,
                 magnesium: 0.08,
                 copper: 8.3,
@@ -436,7 +455,8 @@ export const FEDIAF = {
                 vitamin_d: 639,
                 vitamin_e: 41.7,
                 choline: 1890,
-                linoleic_acid: 1.53
+                linoleic_acid: 1.53,
+                calcium_phosphorus: "1:1"
             }
     },
     Cat: {
@@ -460,7 +480,7 @@ export const FEDIAF = {
                 calcium: 1,
                 phosphorus: 0.84,
                 sodium: 0.16,
-                chlorine: 0.24,
+                chloride: 0.24,
                 potassium: 0.6,
                 magnesium: 0.05,
                 copper: 10,
@@ -484,7 +504,9 @@ export const FEDIAF = {
                 linoleic_acid: 0.55,
                 linolenic_acid: 0.02,
                 arachidonic_acid: 0.02,
-                epa_dha: 0.01
+                epa_dha: 0.01,
+                calcium_phosphorus: "1:1"
+
             },
             Maintenance: {
                 protein: 25,
@@ -506,7 +528,7 @@ export const FEDIAF = {
                 calcium: 0.4,
                 phosphorus: 0.26,
                 sodium: 0.08,
-                chlorine: 0.11,
+                chloride: 0.11,
                 potassium: 0.6,
                 magnesium: 0.04,
                 copper: 5,
@@ -528,7 +550,8 @@ export const FEDIAF = {
                 vitamin_e: 38,
                 choline: 2400,
                 linoleic_acid: 0.5,
-                arachidonic_acid: 0.006
+                arachidonic_acid: 0.006,
+                calcium_phosphorus: "1:1"
             },
             Reproduction: {
                 protein: 30,
@@ -550,7 +573,7 @@ export const FEDIAF = {
                 calcium: 1,
                 phosphorus: 0.84,
                 sodium: 0.16,
-                chlorine: 0.24,
+                chloride: 0.24,
                 potassium: 0.6,
                 magnesium: 0.05,
                 copper: 10,
@@ -574,7 +597,9 @@ export const FEDIAF = {
                 linoleic_acid: 0.55,
                 linolenic_acid: 0.02,
                 arachidonic_acid: 0.02,
-                epa_dha: 0.01
+                epa_dha: 0.01,
+                calcium_phosphorus: "1:1"
+
             },
             Low: {
                 protein: 33.3,
@@ -594,7 +619,7 @@ export const FEDIAF = {
                 calcium: 0.53,
                 phosphorus: 0.35,
                 sodium: 0.1,
-                chlorine: 0.15,
+                chloride: 0.15,
                 potassium: 0.8,
                 magnesium: 0.05,
                 copper: 6.7,
@@ -616,7 +641,9 @@ export const FEDIAF = {
                 vitamin_e: 50.7,
                 choline: 3200,
                 linoleic_acid: 0.67,
-                arachidonic_acid: 0.008
+                arachidonic_acid: 0.008,
+                calcium_phosphorus: "1:1"
+
             }
         
     }
@@ -642,7 +669,7 @@ export const NRC = {
                 calcium: 1.2,
                 phosphorus: 1,
                 sodium: 0.22,
-                chlorine: 0.29,
+                chloride: 0.29,
                 potassium: 0.44,
                 magnesium: 0.04,
                 copper: 11,
@@ -666,7 +693,9 @@ export const NRC = {
                 linoleic_acid: 1.3,
                 linolenic_acid: 0.08,
                 arachidonic_acid: 0.03,
-                epa_dha: 0.05
+                epa_dha: 0.05,
+                calcium_phosphorus: "1:1"
+
             },
             Maintenance: {
                 protein: 10,
@@ -686,7 +715,7 @@ export const NRC = {
                 calcium: 0.4,
                 phosphorus: 0.3,
                 sodium: 0.08,
-                chlorine: 0.12,
+                chloride: 0.12,
                 potassium: 0.4,
                 magnesium: 0.06,
                 copper: 6,
@@ -709,7 +738,9 @@ export const NRC = {
                 choline: 1700,
                 linoleic_acid: 1.1,
                 linolenic_acid: 0.044,
-                epa_dha: 0.044
+                epa_dha: 0.044,
+                calcium_phosphorus: "1:1"
+
             },
             Reproduction: {
                 protein: 20,
@@ -729,7 +760,7 @@ export const NRC = {
                 calcium: 0.8,
                 phosphorus: 0.5,
                 sodium: 0.2,
-                chlorine: 0.3,
+                chloride: 0.3,
                 potassium: 0.36,
                 magnesium: 0.06,
                 copper: 12.4,
@@ -752,7 +783,9 @@ export const NRC = {
                 choline: 1700,
                 linoleic_acid: 1.3,
                 linolenic_acid: 0.08,
-                epa_dha: 0.05
+                epa_dha: 0.05,
+                calcium_phosphorus: "1:1"
+
             }
         
     },
@@ -776,7 +809,7 @@ export const NRC = {
                 calcium: 0.8,
                 phosphorus: 0.72,
                 sodium: 0.14,
-                chlorine: 0.09,
+                chloride: 0.09,
                 potassium: 0.4,
                 magnesium: 0.048,
                 copper: 8.4,
@@ -800,7 +833,9 @@ export const NRC = {
                 linoleic_acid: 0.55,
                 linolenic_acid: 0.02,
                 arachidonic_acid: 0.02,
-                epa_dha: 0.01
+                epa_dha: 0.01,
+                calcium_phosphorus: "1:1"
+
             },
             Maintenance: {
                 protein: 20,
@@ -821,7 +856,7 @@ export const NRC = {
                 calcium: 0.29,
                 phosphorus: 0.26,
                 sodium: 0.068,
-                chlorine: 0.096,
+                chloride: 0.096,
                 potassium: 0.52,
                 magnesium: 0.04,
                 copper: 5,
@@ -845,7 +880,9 @@ export const NRC = {
                 choline: 2550,
                 linoleic_acid: 0.55,
                 arachidonic_acid: 0.006,
-                epa_dha: 0.01
+                epa_dha: 0.01,
+                calcium_phosphorus: "1:1"
+
             },
             Reproduction: {
                 protein: 22.5,
@@ -866,7 +903,7 @@ export const NRC = {
                 calcium: 0.8,
                 phosphorus: 0.72,
                 sodium: 0.14,
-                chlorine: 0.09,
+                chloride: 0.09,
                 potassium: 0.4,
                 magnesium: 0.04,
                 copper: 8.4,
@@ -891,7 +928,9 @@ export const NRC = {
                 linoleic_acid: 0.55,
                 linolenic_acid: 0.02,
                 arachidonic_acid: 0.02,
-                epa_dha: 0.01
+                epa_dha: 0.01,
+                calcium_phosphorus: "1:1"
+
             }
         
     }

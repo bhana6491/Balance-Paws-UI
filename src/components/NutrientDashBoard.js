@@ -4,7 +4,9 @@ import { Chart } from "react-google-charts";
 const { Title } = Typography;
 import {sumNutrients} from './NutrientSummary'
 const NutrientDashBoard = ({ recipe}) => {
+    console.log(recipe)
     const totalNutrients = sumNutrients(recipe);
+    console.log(totalNutrients)
 
     if (recipe.length == 0){
         return <Title level={5}>Please add ingredients to view nutrient analysis</Title>;
