@@ -44,7 +44,7 @@ export const unit_mappings = {
   calcium: 'g',
   phosphorus: 'g',
   sodium: 'g',
-  chloride: 'g',
+  chlorine: 'g',
   potassium: 'g',
   magnesium: 'mg',
   sulfur: 'mg',
@@ -241,7 +241,7 @@ export const compositionCategories = {
 };
 // TODO - DO THIS IN THE DATABASE 
 export const nutrients_mg_to_g = ['calcium', 'phosphorus', 'potassium', 'sodium', 'chloride'];
-export const nutrients_iu_to_mg = ['iodine', 'selenium', 'folate', 'vitamin_b12'];
+export const nutrients_ug_to_mg = ['iodine', 'selenium', 'folate', 'vitamin_b12'];
 export const sumNutrients = (recipe) => {
   const sumNutrients = {};
 
@@ -261,32 +261,28 @@ export const sumNutrients = (recipe) => {
 // Outside of the Recipe Because it will be imported in NutrientAnalysis.js in order to generate a holistic nutrient analysis excel sheet. 
 export const generateNutrientCompositionData = (category, recipe) => {
   return Object.entries(sumNutrients(recipe))
-      .filter(
-          ([key, value]) =>
-              compositionCategories[category].hasOwnProperty(key) && value !== null
-      )
-      .map(([key, value]) => {
-          // NOTE: The amount is divided by 100 because the values are per 100g
-          const nutrientValue = recipe.reduce((sum, ingredient) => {
-            // TODO: PUT THIS LOGIC IN THE SCRIPT BEFORE INSERTINGING INTO DB 
-            if (!ingredient.ingredient[key]){
-              return sum
-            }
-            const ingredientValue = (nutrients_mg_to_g.includes(ingredient.ingredient[key]) || nutrients_iu_to_mg.includes(ingredient.ingredient[key]) ? ingredient.ingredient[key] / 100 : ingredient.ingredient[key]).toFixed(2)
-              const ingredientAmount = ingredient.amount;
-              if (ingredientValue && ingredientAmount) {
-                  return sum + ((ingredientAmount/100)*ingredientValue);
-              }
-              return sum;
-          }, 0);
-          return {
-              key: key,
-              nutrient: compositionCategories[category][key],
-              value: nutrientValue.toFixed(2),
-              //TODO: PUT THIS LOGIC IN THE SCRIPT BEFORE INSERTINGING INTO DB 
-              unit: nutrients_mg_to_g.includes(key) ? 'g' : (nutrients_iu_to_mg.includes(key) ? 'mg' : unit_mappings[key]),
-            };
-      });
+    .filter(([key, value]) =>
+      compositionCategories[category].hasOwnProperty(key) && value !== null
+    )
+    .map(([key, value]) => {
+      const nutrientValue = recipe.reduce((sum, ingredient) => {
+        if (!ingredient.ingredient[key]) {
+          return sum;
+        }
+        const ingredientValue = (nutrients_mg_to_g.includes(key) || nutrients_ug_to_mg.includes(key)) ? ingredient.ingredient[key] / 1000 : ingredient.ingredient[key];
+        const ingredientAmount = ingredient.amount;
+        if (ingredientValue && ingredientAmount) {
+          sum += (ingredientAmount / 100) * ingredientValue;
+        }
+        return sum;
+      }, 0);
+      return {
+        key: key,
+        nutrient: compositionCategories[category][key],
+        value: nutrientValue.toFixed(2),
+        unit: nutrients_mg_to_g.includes(key) ? 'g' : (nutrients_ug_to_mg.includes(key) ? 'mg' : unit_mappings[key]),
+      };
+    });
 };
 
 
@@ -308,11 +304,11 @@ const Recipe = ({ recipe }) => {
                                 { title: "Value", dataIndex: "value", key: "value" },
                                 { title: "Unit", dataIndex: "unit", key: "unit" },
                             ];
-                            console.log(record)
+                            console.log(record.key)
                             const ingredientData = recipe.map((ingredient) => ({
                                 key: ingredient.ingredient.name,
                                 ingredient: ingredient.ingredient.name,
-                                value: parseFloat(ingredient.amount/100 * ((nutrients_mg_to_g.includes(record.key) || nutrients_iu_to_mg.includes(record.key)) ? ingredient.ingredient[record.key] / 100 : ingredient.ingredient[record.key])).toFixed(2),
+                                value: parseFloat(ingredient.amount/100 * ((nutrients_mg_to_g.includes(record.key) || nutrients_ug_to_mg.includes(record.key)) ? ingredient.ingredient[record.key] / 1000 : ingredient.ingredient[record.key])).toFixed(2),
                                 unit: unit_mappings[record.key],
                             }));
                             return (
