@@ -424,7 +424,7 @@ const IngredientsTable = (petInfo) => {
         className="modal"
       >
         <Title level={3}>Current Recipe</Title>
-        <RecipeSummary currentRecipe = {currentRecipe} petInfo={petInfo} handleDelete={handleDelete}></RecipeSummary>
+        <RecipeSummary currentRecipe = {currentRecipe} petInfo={petInfo} updateInclusion={updateInclusion} handleDelete={handleDelete} setCurrentRecipe={setCurrentRecipe}></RecipeSummary>
         {/* <Table
           dataSource={currentRecipe}
           columns={[
