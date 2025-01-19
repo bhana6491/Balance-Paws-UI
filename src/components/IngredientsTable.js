@@ -68,22 +68,16 @@ const IngredientsTable = (petInfo) => {
     }, 100);
     // Add selectedRow and amount to currentRecipe
     setCurrentRecipe((prevRecipe) => {
-      const existingIngredient = prevRecipe.find(item => item.ingredient === selectedRow);
-      console.log(selectedRow)
-      if (existingIngredient) {
-      existingIngredient.amount = existingIngredient.amount + amount;
+      const existingIngredientIndex = prevRecipe.findIndex(item => item.ingredient.name === selectedRow.name);
+      if (existingIngredientIndex !== -1) {
+        prevRecipe[existingIngredientIndex].amount += amount ;
       } else {
-      prevRecipe.push({ ingredient: selectedRow, amount: amount });
+        prevRecipe.push({ ingredient: selectedRow, amount: amount });
       }
       
-      // const totalAmount = prevRecipe.reduce((sum, item) => sum + item.amount, 0);
-      // prevRecipe.forEach(item => {
-      // item.inclusion = parseFloat((item.amount / totalAmount) * 100).toFixed(2);
-      // });
-      updateInclusion(prevRecipe)
+      updateInclusion(prevRecipe);
       return [...prevRecipe];
     });
-    console.log(currentRecipe)
   };
 
   // Ingredient amount input
@@ -424,23 +418,7 @@ const IngredientsTable = (petInfo) => {
         className="modal"
       >
         <Title level={3}>Current Recipe</Title>
-        <RecipeSummary currentRecipe = {currentRecipe} petInfo={petInfo} handleDelete={handleDelete}></RecipeSummary>
-        {/* <Table
-          dataSource={currentRecipe}
-          columns={[
-            { title: "Ingredient", dataIndex: "ingredient.name", render: (text, record) => record.ingredient.name },
-            { title: "Amount", dataIndex: "amount", key: "amount" },
-            { 
-              title: "Action", 
-              dataIndex: "action", 
-              render: (text, record) => (
-                <Button type="link" onClick={() => handleDelete(record)}><DeleteOutlined></DeleteOutlined></Button>
-              ),
-            },
-          ]}
-          rowKey={(record, index) => index}
-          pagination={false}
-        /> */}
+        <RecipeSummary currentRecipe = {currentRecipe} petInfo={petInfo} handleDelete={handleDelete} setCurrentRecipe={setCurrentRecipe}></RecipeSummary>
       </Modal>
 
     </div>
