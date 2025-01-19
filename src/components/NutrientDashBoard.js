@@ -3,6 +3,18 @@ import { Badge, Dropdown, Space, Table, Tabs, Typography} from 'antd';
 import { Chart } from "react-google-charts";
 const { Title } = Typography;
 import {sumNutrients} from './NutrientSummary'
+import  MacroChart  from '../app/graphs/MacronutrientsChart';
+
+const formatData = (data) => {
+    const myData = Object.entries(data).map(([label, value]) => ({
+        id: label,
+        label: label,
+        value: value,
+        color: `hsl(${Math.floor(Math.random() * 360)}, 70%, 50%)`
+    }));
+
+    return myData;
+}
 const NutrientDashBoard = ({ recipe}) => {
     console.log(recipe)
     const totalNutrients = sumNutrients(recipe);
@@ -17,30 +29,35 @@ const NutrientDashBoard = ({ recipe}) => {
     const energy = ((3.5 * totalNutrients['protein']) + (8.5 * totalNutrients['fat']) + (3.5 * totalNutrients['nitrogen_free_extract']))*10;
     const protein = (3.5 * totalNutrients['protein'])/energy * 1000;
     const carbs = (3.5 * totalNutrients['nitrogen_free_extract'])/energy * 1000;
-    const fat = (8.5 * totalNutrients['fat'])/energy * 1000;
-    const data = [
-        ["Macronutrient" ,"% of Total Calories"],
-        ["Protein", protein],
-        ["Fat", carbs],
-        ["Carbohydrates", fat],
-      ];
-    
-    const options = {
-        title: "% of Total Calories by Macronutrient",
-    };
+    const fat = ((8.5 * totalNutrients['fat']) / energy * 1000)
+    const data = {
+        "Protein": protein.toFixed(2),
+        "Fat": carbs.toFixed(2),
+        "Carbohydrates": fat.toFixed(2),
+    }; 
+
     return (
         <>
-            <div className='grid grid-cols-2 grid-rows-4 gap-4' style={{ overflow: 'auto' }}>
-                <div className='border border-black p-4'>
-                    <Chart
-                        chartType="PieChart"
-                        data={data}
-                        options={options}
-                        width={"100%"}
-                        height={"100%"}
-                    />
-                </div>
-            </div>
+            <Tabs defaultActiveKey="1">
+                <Tabs.TabPane tab="Macronutrient Breakdown" key="1">
+                    <div className= 'text-center'style={{ height: 500 }}>
+                        <h2 className='text-base font-semibold'>% of Total Calories by Macronutrient</h2>
+                        <MacroChart data={formatData(data)}></MacroChart>
+                    </div>
+                </Tabs.TabPane>
+                <Tabs.TabPane tab="Tab 2" key="2">
+                    <div style={{ height: 500 }}>
+                    </div>
+                </Tabs.TabPane>
+                <Tabs.TabPane tab="Tab 3" key="3">
+                    <div style={{ height: 500 }}>
+                    </div>
+                </Tabs.TabPane>
+                <Tabs.TabPane tab="Tab 4" key="4">
+                    <div style={{ height: 500 }}>
+                    </div>
+                </Tabs.TabPane>
+            </Tabs>
         </>
     );
 };

@@ -4,17 +4,22 @@ import { SearchOutlined, DeleteOutlined } from "@ant-design/icons";
 import NutrientSummary from './NutrientSummary';
 import NutrientAnalysis from './NutrientAnalysis';
 import NutrientDashBoard from './NutrientDashBoard';
-const RecipeSummary = ( {currentRecipe, handleDelete, petInfo, setCurrentRecipe, updateInclusion}) => {
+const RecipeSummary = ( {currentRecipe, handleDelete, petInfo, setCurrentRecipe}) => {
 
     const handleAmountChange = (e, record) => {
         const { value } = e.target;
         const updatedRecipe = currentRecipe.map(item => {
-            if (item === record) {
-                return { ...item, amount: value };
+            if (item.ingredient.name === record.ingredient.name) {
+                item.amount = parseFloat(value);
             }
             return item;
         });
-        updateInclusion(updatedRecipe)
+
+        const totalAmount = updatedRecipe.reduce((total, item) => total + parseFloat(item.amount), 0);
+
+        updatedRecipe.forEach(item => {
+            item.inclusion = ((parseFloat(item.amount) / totalAmount) * 100).toFixed(2);
+        });
         setCurrentRecipe(updatedRecipe);
     };
 
