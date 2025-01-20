@@ -4,6 +4,11 @@ import { SearchOutlined, DeleteOutlined } from "@ant-design/icons";
 import NutrientSummary from './NutrientSummary';
 import NutrientAnalysis from './NutrientAnalysis';
 import NutrientDashBoard from './NutrientDashBoard';
+
+const resetRecipe = (setCurrentRecipe) => {
+    setCurrentRecipe([])
+    sessionStorage.removeItem("recipe");
+}
 const RecipeSummary = ( {currentRecipe, handleDelete, petInfo, setCurrentRecipe}) => {
 
     const handleAmountChange = (e, record) => {
@@ -21,6 +26,7 @@ const RecipeSummary = ( {currentRecipe, handleDelete, petInfo, setCurrentRecipe}
             item.inclusion = ((parseFloat(item.amount) / totalAmount) * 100).toFixed(2);
         });
         setCurrentRecipe(updatedRecipe);
+        sessionStorage.setItem('recipe', JSON.stringify(updatedRecipe))
     };
 
     const columns = [
@@ -64,7 +70,9 @@ const RecipeSummary = ( {currentRecipe, handleDelete, petInfo, setCurrentRecipe}
                         rowKey={(record, index) => index}
                         pagination={false}
                     />
+                    <Button type="primary" onClick={() => resetRecipe(setCurrentRecipe)} className="mt-5">Reset</Button>
                 </Tabs.TabPane>
+
                 <Tabs.TabPane tab="Nutrient Composition" key="2">
                     <NutrientSummary recipe={currentRecipe}/>
                 </Tabs.TabPane>

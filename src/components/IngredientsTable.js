@@ -41,7 +41,6 @@ const IngredientsTable = (petInfo) => {
 
   const openRecipeModal = () => {
     setShowRecipeModal(true);
-
   };
 
   const updateInclusion = (prevRecipe) => {
@@ -51,6 +50,8 @@ const IngredientsTable = (petInfo) => {
     });
     return [...prevRecipe];
   }
+
+
 
   const closeRecipeModal = () => {
     setShowRecipeModal(false);
@@ -70,12 +71,13 @@ const IngredientsTable = (petInfo) => {
     setCurrentRecipe((prevRecipe) => {
       const existingIngredientIndex = prevRecipe.findIndex(item => item.ingredient.name === selectedRow.name);
       if (existingIngredientIndex !== -1) {
-        prevRecipe[existingIngredientIndex].amount += amount ;
+      prevRecipe[existingIngredientIndex].amount += amount ;
       } else {
-        prevRecipe.push({ ingredient: selectedRow, amount: amount });
+      prevRecipe.push({ ingredient: selectedRow, amount: amount });
       }
-      
+
       updateInclusion(prevRecipe);
+      sessionStorage.setItem("recipe", JSON.stringify(prevRecipe));
       return [...prevRecipe];
     });
   };
@@ -267,9 +269,16 @@ const IngredientsTable = (petInfo) => {
   useEffect(() => {
     const fetchData = () => {
       try {
-        const cachedData = sessionStorage.getItem("ingredientsData");
-        if (cachedData) {
-          setDataSource(JSON.parse(cachedData));
+        const cachedIngredients = sessionStorage.getItem("ingredientsData");
+        const cachedRecipe = sessionStorage.getItem("recipe")
+        // const cachedPetInfo = sessionStorage.getItem("petInfo")
+
+        if (cachedRecipe) {
+          setCurrentRecipe(JSON.parse(cachedRecipe))
+        }
+        
+        if (cachedIngredients) {
+          setDataSource(JSON.parse(cachedIngredients));
         } else {
           fetch(
             "https://2kj1u5y1yh.execute-api.us-east-1.amazonaws.com/Testing/ingredients",
@@ -286,6 +295,8 @@ const IngredientsTable = (petInfo) => {
       } catch (error) {
         console.error("Error fetching data:", error);
       }
+
+      
     };
 
     fetchData();
