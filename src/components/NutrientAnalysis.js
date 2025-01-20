@@ -187,7 +187,7 @@ const exportToExcel = (analysis, composition, analysis_basis) => {
     saveAs(blob, 'Recipe.xlsx');
   };
 
-const calcDryMatter = (recipe) => {
+export const calcDryMatter = (recipe) => {
 
     const totalDryMatter = recipe.reduce((sum, ingredient) => {
         const dryMatterValue = ingredient.ingredient.dry_matter;
@@ -225,7 +225,7 @@ const calcDryMatter = (recipe) => {
     return dryMatter;
 };
 
-const calcAsFed = (recipe) => {
+export const calcAsFed = (recipe) => {
 
     const totalIngredientAmount = recipe.reduce((sum, ingredient) => {
         return sum + ingredient.amount;

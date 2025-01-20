@@ -72,7 +72,7 @@ const RecipeSummary = ( {currentRecipe, handleDelete, petInfo, setCurrentRecipe}
                     <NutrientAnalysis recipe={currentRecipe} petInfo={petInfo}/>
                 </Tabs.TabPane>
                 <Tabs.TabPane tab="Nutrient DashBoard" key="4">
-                    <NutrientDashBoard recipe={currentRecipe} />
+                    <NutrientDashBoard recipe={currentRecipe} petInfo={petInfo} />
                 </Tabs.TabPane>
 
             </Tabs>
