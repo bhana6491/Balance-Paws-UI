@@ -11,7 +11,7 @@ export default function RecipeGenerator() {
   const [species, setSpecies] = useState([]);
   const [activityLevel, setActivityLevel] = useState();
   const [lifestage, setLifeStage] = useState();
-  const [weight, setWeight] = useState(0);
+  const [weight, setWeight] = useState(1);
 
   // Refactor this
   useEffect(() => {
