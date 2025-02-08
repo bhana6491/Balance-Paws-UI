@@ -18,7 +18,7 @@ const menu = (
     </Menu>
 );
 
-export const Page = () => {
+const Page = () => {
     const { data: session} = useSession();
 
 return (
@@ -42,9 +42,6 @@ return (
 
     </div>
 )
-
-
-
 };
 
 export default function RecipesHome() {
