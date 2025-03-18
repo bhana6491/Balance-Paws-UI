@@ -1,10 +1,10 @@
 'use client';  // Ensures the code is executed on the client-side only
-
 import { useSession } from "next-auth/react";
-import RecipeGenerator from "./RecipeGenerator";
 import { Avatar, Dropdown } from 'antd';
 import { SessionProvider } from "next-auth/react";
-import {MenuComponent} from '../../components/utils';
+import Profile from './Profile';
+import { UserOutlined } from '@ant-design/icons';
+import { MenuComponent } from '../../components/utils';
 
 const Page = () => {
     const { data: session, status } = useSession();
@@ -21,10 +21,10 @@ const Page = () => {
                         <div className="font-poppins text-earth-green text-3xl">Balance Paws</div>
                         <Dropdown overlay={MenuComponent} placement="bottomRight">
                             <Avatar size="large" src={session?.user?.image} />
-                        </Dropdown>        
+                        </Dropdown>
                     </nav>
                     <div>
-                        <RecipeGenerator />
+                        <Profile session={session}></Profile>
                     </div>
                 </div>
             ) : (
@@ -34,7 +34,7 @@ const Page = () => {
     );
 };
 
-export default function RecipesHome() {
+export default function ProfilePage() {
     return (
         <SessionProvider>
             <Page />

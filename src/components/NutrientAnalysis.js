@@ -314,7 +314,6 @@ const Recipe = ({ recipe, format, petInfo}) => {
     };
   
     const generateNutrientAnalysisData = (category, nutrientsFinal, species, life_stage, activity_level) => {
-        console.log(species, activity_level, life_stage )
         return Object.entries(nutrientsFinal)
             .filter(
                 ([key, value]) =>
@@ -383,7 +382,7 @@ const NutrientAnalysis = ({ recipe,petInfo}) => {
     if (recipe.length == 0){
         return <Title level={5}>Please add ingredients to view nutrient analysis</Title>;
     }
-    if (!petInfo.petInfo.species || !petInfo.petInfo.life_stage || !petInfo.petInfo.activity_level || !petInfo.petInfo.weight){ 
+    if (!petInfo || !petInfo.petInfo.species || !petInfo.petInfo.life_stage || !petInfo.petInfo.activity_level || !petInfo.petInfo.weight){ 
         return <Title level={5}>Please provide information about Pet for a detailed analysis breakdown</Title>;
     }
 

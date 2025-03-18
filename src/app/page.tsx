@@ -5,10 +5,6 @@ import { signIn, signOut, auth } from "../../auth";
 
 const Home = async () => {
   const session = await auth();
-  console.log(process.env.AUTH_SECRET)
-  console.log(process.env.NEXTAUTH_URL)
-  console.log(process.env.AUTH_GOOGLE_ID)
-  console.log(process.env.AUTH_GOOGLE_SECRET)
 
   return (
     <div className="flex flex-col bg-beige min-h-screen px-4 md:px-20 pt-10">

@@ -1,6 +1,8 @@
 import {Tabs, Table, Typography} from 'antd';
-import {Modal,Button} from 'antd';
+import {Modal,Button, Menu} from 'antd';
 import { DeleteOutlined } from "@ant-design/icons";
+import { signOut } from "next-auth/react";
+
 const { Title } = Typography;
 
 export const unit_mappings = {
@@ -256,4 +258,20 @@ export const CurrentRecipeModal = ({selectedRow, amount, handleAmountChange, clo
       </Modal>
 
     )
+};
+export const MenuComponent = () => {
+  return (
+    <Menu>
+      <Menu.Item key="1" onClick={() => window.location.href = '/profile'}>
+        Profile
+      </Menu.Item>
+      <Menu.Item key="2" onClick={() => window.location.href = '/recipes'}>
+        Recipe Generator
+      </Menu.Item>
+      <Menu.Item key="3" onClick={() => signOut({ callbackUrl: '/', redirect: true })}>
+        Logout
+      </Menu.Item>
+
+    </Menu>
+  );
 };
