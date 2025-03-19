@@ -4,6 +4,22 @@ import { SearchOutlined, DeleteOutlined } from "@ant-design/icons";
 import NutrientSummary from './NutrientSummary';
 import NutrientAnalysis from './NutrientAnalysis';
 import NutrientDashBoard from './NutrientDashBoard';
+import * as XLSX from 'xlsx';
+
+const exportToExcel = (data) => {
+    const headers = ["Ingredient", "Amount (g)", "Inclusion (%)"];
+    const rows = data.map(item => [
+        item.ingredient.name,
+        item.amount,
+        item.inclusion
+    ]);
+
+    const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Recipe Summary");
+
+    XLSX.writeFile(workbook, "RecipeSummary.xlsx");
+};
 
 const resetRecipe = (setCurrentRecipe) => {
     setCurrentRecipe([])
@@ -70,7 +86,29 @@ const RecipeSummary = ( {currentRecipe, handleDelete, petInfo, setCurrentRecipe}
                         rowKey={(record, index) => index}
                         pagination={false}
                     />
-                    <Button type="primary" onClick={() => resetRecipe(setCurrentRecipe)} className="mt-5">Reset</Button>
+
+                    <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+                        <Button 
+                            onClick={() => resetRecipe(setCurrentRecipe)} 
+                            className="fill-earth-green rounded-md text-base text-beige font-poppins"
+                            style={{
+                                backgroundColor: "#4F6F52",
+                                width: "100px",
+                            }}
+                        >
+                            Reset
+                        </Button>
+                        <Button 
+                            onClick={() => exportToExcel(currentRecipe)} 
+                            className="fill-earth-green rounded-md text-base text-beige font-poppins"
+                            style={{
+                                backgroundColor: "#4F6F52",
+                                width: "200px",
+                            }}
+                        >
+                            Export to Excel
+                        </Button>
+                    </div>
                 </Tabs.TabPane>
 
                 <Tabs.TabPane tab="Nutrient Composition" key="2">
@@ -82,10 +120,10 @@ const RecipeSummary = ( {currentRecipe, handleDelete, petInfo, setCurrentRecipe}
                 <Tabs.TabPane tab="Nutrient DashBoard" key="4">
                     <NutrientDashBoard recipe={currentRecipe} petInfo={petInfo} />
                 </Tabs.TabPane>
-
             </Tabs>
         </div>
     );
+
 }
 
 export default RecipeSummary;

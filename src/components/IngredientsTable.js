@@ -1,14 +1,12 @@
 import React, { useEffect, useState, useRef } from "react";
-import { SearchOutlined, DeleteOutlined, LoadingOutlined} from "@ant-design/icons";
-import { Table, Modal, Button, Input, Space, Pagination } from "antd";
+import { SearchOutlined, DeleteOutlined, LoadingOutlined, UploadOutlined } from "@ant-design/icons";
+import { Table, Modal, Button, Input, Space, InputNumber, message, Typography, Upload, Spin } from "antd";
 import Highlighter from "react-highlight-words";
-import { Typography } from "antd";
-import { Tabs, InputNumber, message } from "antd";
-import {NutrientsTable} from "./utils";
+import { NutrientsTable } from "./utils";
 import RecipeSummary from "./RecipeSummary";
+import * as XLSX from "xlsx";
+
 const { Title } = Typography;
-import { Flex, Spin } from 'antd';
-import { revalidatePath } from "next/cache";
 
 const IngredientsTable = (petInfo) => {
   const [dataSource, setDataSource] = useState([]);
@@ -19,8 +17,9 @@ const IngredientsTable = (petInfo) => {
   const searchInput = useRef(null);
   const [messageApi, contextHolder] = message.useMessage();
   const [currentRecipe, setCurrentRecipe] = useState([]);
-  const key = "updatable";
   const [showRecipeModal, setShowRecipeModal] = useState(false);
+
+  const key = "updatable";
 
   const handleRowClick = (record) => {
     setSelectedRow(record);
@@ -31,10 +30,9 @@ const IngredientsTable = (petInfo) => {
     setAmount(100); // Reset the amount to 100g after closing the modal
   };
 
-
   const handleDelete = (record) => {
     setCurrentRecipe((prevRecipe) => {
-      const updatedRecipe = prevRecipe.filter(item => item !== record);
+      const updatedRecipe = prevRecipe.filter((item) => item !== record);
       return updateInclusion(updatedRecipe);
     });
   };
@@ -43,21 +41,18 @@ const IngredientsTable = (petInfo) => {
     setShowRecipeModal(true);
   };
 
-  const updateInclusion = (prevRecipe) => {
-    const totalAmount = prevRecipe.reduce((sum, item) => sum + item.amount, 0);
-    prevRecipe.forEach(item => {
-    item.inclusion = parseFloat((item.amount / totalAmount) * 100).toFixed(2);
-    });
-    return [...prevRecipe];
-  }
-
-
-
   const closeRecipeModal = () => {
     setShowRecipeModal(false);
   };
 
-  // Add to recipe confirmation
+  const updateInclusion = (prevRecipe) => {
+    const totalAmount = prevRecipe.reduce((sum, item) => sum + item.amount, 0);
+    prevRecipe.forEach((item) => {
+      item.inclusion = parseFloat((item.amount / totalAmount) * 100).toFixed(2);
+    });
+    return [...prevRecipe];
+  };
+
   const openMessage = () => {
     setTimeout(() => {
       messageApi.open({
@@ -67,13 +62,14 @@ const IngredientsTable = (petInfo) => {
         duration: 1,
       });
     }, 100);
-    // Add selectedRow and amount to currentRecipe
     setCurrentRecipe((prevRecipe) => {
-      const existingIngredientIndex = prevRecipe.findIndex(item => item.ingredient.name === selectedRow.name);
+      const existingIngredientIndex = prevRecipe.findIndex(
+        (item) => item.ingredient.name === selectedRow.name
+      );
       if (existingIngredientIndex !== -1) {
-      prevRecipe[existingIngredientIndex].amount += amount ;
+        prevRecipe[existingIngredientIndex].amount += amount;
       } else {
-      prevRecipe.push({ ingredient: selectedRow, amount: amount });
+        prevRecipe.push({ ingredient: selectedRow, amount: amount });
       }
 
       updateInclusion(prevRecipe);
@@ -82,22 +78,62 @@ const IngredientsTable = (petInfo) => {
     });
   };
 
-  // Ingredient amount input
   const handleAmountChange = (value) => {
     setAmount(value);
   };
 
-  // Ingredient name search functionality
-  const handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
-    setSearchText(selectedKeys[0]);
-    setSearchedColumn(dataIndex);
+  const handleFileUpload = (file) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+        // Validate the file structure
+        if (!validateFileStructure(jsonData)) {
+          message.error("Invalid file structure. Please ensure the file has 'Ingredient', 'Amount (g)', and 'Inclusion (%)' columns.");
+          return;
+        }
+
+        // Map the data to the currentRecipe format
+        const updatedRecipe = jsonData.map((row) => {
+          const ingredient = dataSource.find(
+            (item) => item.name === row["Ingredient"]
+          );
+
+          if (!ingredient) {
+            throw new Error(`Ingredient "${row["Ingredient"]}" not found in the data source.`);
+          }
+
+          return {
+            ingredient,
+            amount: parseFloat(row["Amount (g)"]),
+            inclusion: parseFloat(row["Inclusion (%)"]),
+          };
+        });
+
+        setCurrentRecipe(updatedRecipe);
+        updateInclusion(updatedRecipe);
+
+        sessionStorage.setItem("recipe", JSON.stringify(updatedRecipe));
+        message.success("Recipe updated successfully!");
+      } catch (error) {
+        console.error("Error reading file:", error);
+        message.error("Failed to process the file. Please try again.");
+      }
+    };
+    reader.readAsArrayBuffer(file);
+    return false; // Prevent default upload behavior
   };
 
-  const handleReset = (clearFilters) => {
-    setSearchText("");
-    setSearchedColumn("");
-    clearFilters();
+  const validateFileStructure = (data) => {
+    if (data.length === 0) return false;
+    const requiredHeaders = ["Ingredient", "Amount (g)", "Inclusion (%)"];
+    const fileHeaders = Object.keys(data[0]);
+    return requiredHeaders.every((header) => fileHeaders.includes(header));
   };
 
   const getColumnSearchProps = (dataIndex) => ({
@@ -139,7 +175,7 @@ const IngredientsTable = (petInfo) => {
           >
             Search
           </Button>
-          <Button
+          <Button 
             onClick={() => clearFilters && handleReset(clearFilters)}
             size="small"
             style={{
@@ -148,19 +184,6 @@ const IngredientsTable = (petInfo) => {
           >
             Reset
           </Button>
-          {/* <Button
-            type="link"
-            size="small"
-            onClick={() => {
-              confirm({
-                closeDropdown: false,
-              });
-              setSearchText(selectedKeys[0]);
-              setSearchedColumn(dataIndex);
-            }}
-          >
-            Filter
-          </Button> */}
           <Button
             type="link"
             size="small"
@@ -266,62 +289,60 @@ const IngredientsTable = (petInfo) => {
       width: "30%",
     },
   ];
+
   useEffect(() => {
     const fetchData = () => {
       try {
         const cachedIngredients = sessionStorage.getItem("ingredientsData");
-        const cachedRecipe = sessionStorage.getItem("recipe")
-        // const cachedPetInfo = sessionStorage.getItem("petInfo")
+        const cachedRecipe = sessionStorage.getItem("recipe");
 
         if (cachedRecipe) {
-          setCurrentRecipe(JSON.parse(cachedRecipe))
+          setCurrentRecipe(JSON.parse(cachedRecipe));
         }
-        
+
         if (cachedIngredients) {
           setDataSource(JSON.parse(cachedIngredients));
         } else {
           fetch(
-            "https://2kj1u5y1yh.execute-api.us-east-1.amazonaws.com/Testing/ingredients",
+            "https://2kj1u5y1yh.execute-api.us-east-1.amazonaws.com/Testing/ingredients"
           )
-            .then(response => response.json())
-            .then(data => {
+            .then((response) => response.json())
+            .then((data) => {
               setDataSource(JSON.parse(data.body));
               sessionStorage.setItem("ingredientsData", data.body);
             })
-            .catch(error => {
+            .catch((error) => {
               console.error("Error fetching data:", error);
             });
         }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-
-      
     };
 
     fetchData();
   }, []);
-  // setDataSource(JSON.parse(data.body));
 
   while (!dataSource || dataSource.length === 0) {
     return (
       <div className="flex justify-center items-center h-full">
-      <Spin
-        indicator={
-        <LoadingOutlined
-          style={{
-          fontSize: 48,
-          color: '#4F6F52', // Change the color here
-          }}
-          spin
+        <Spin
+          indicator={
+            <LoadingOutlined
+              style={{
+                fontSize: 48,
+                color: "#4F6F52", // Change the color here
+              }}
+              spin
+            />
+          }
         />
-        }
-      />
-      <h1 className="text-4xl font-poppins text-earth-green my-10 ml-10">Loading...</h1>
+        <h1 className="text-4xl font-poppins text-earth-green my-10 ml-10">
+          Loading...
+        </h1>
       </div>
     );
   }
-
 
   return (
     <div className="font-poppins text-earth-green" style={{ display: "" }}>
@@ -334,16 +355,13 @@ const IngredientsTable = (petInfo) => {
             onClick: () => handleRowClick(record),
           })}
           scroll={{ y: 385 }}
-          style={{ height: "500px", minHeight: "500px" }
-        }
-        pagination={{
-          pageSize:50,
-          showSizeChanger:false
-        }}
-
+          style={{ height: "500px", minHeight: "500px" }}
+          pagination={{
+            pageSize: 50,
+            showSizeChanger: false,
+          }}
         />
       </div>
-      {/* <Pagination size="small" total={50} /> */}
       {selectedRow && (
         <div className="w-80">
           <Modal
@@ -386,40 +404,46 @@ const IngredientsTable = (petInfo) => {
         </div>
       )}
       <div className="flex justify-between">
-        {/* <div className="flex-none">
-        <button
-          onClick={openRecipeModal}
-          className="fill-earth-green rounded-md block text-base text-beige font-poppins"
-          style={{
-            backgroundColor: "#4F6F52",
-            width: "200px",
-            height: "50px",
-            outline: "1px solid black",
-          }}
-        >
-          Analyze Recipe
-        </button>
-        </div> */}
-        <div className="flex-none"> 
-        <button
-          onClick={openRecipeModal}
-          className="fill-earth-green rounded-md block text-base text-beige font-poppins"
-          style={{
-            backgroundColor: "#4F6F52",
-            width: "200px",
-            outline: "1px solid black",
-          }}
-        >
-          View Recipe
-          <img
-            className="w-12 inline-block"
-            src="/food_bowl.png"
-            alt="Food Bowl"
-          />
-        </button>
+        <div className="flex-none">
+          <button
+            onClick={openRecipeModal}
+            className="fill-earth-green rounded-md block text-base text-beige font-poppins"
+            style={{
+              backgroundColor: "#4F6F52",
+              width: "200px",
+              height: "50px",
+              outline: "1px solid black",
+            }}
+          >
+            View Recipe
+            <img
+              className="w-12 inline-block"
+              src="/food_bowl.png"
+              alt="Food Bowl"
+            />
+          </button>
+        </div>
+        <div className="flex-none">
+          <Upload
+            accept=".xlsx, .xls"
+            beforeUpload={handleFileUpload}
+            showUploadList={false}
+          >
+            <button
+              className="fill-earth-green rounded-md block text-base text-beige font-poppins"
+              style={{
+                backgroundColor: "#4F6F52",
+                width: "200px",
+                height: "50px",
+                outline: "1px solid black",
+              }}
+            >
+              <UploadOutlined className='' style={{ marginRight: 8 }} />
+              Upload Recipe
+            </button>
+          </Upload>
         </div>
       </div>
-      
 
       <Modal
         visible={showRecipeModal}
@@ -429,12 +453,15 @@ const IngredientsTable = (petInfo) => {
         className="modal"
       >
         <Title level={3}>Current Recipe</Title>
-        <RecipeSummary currentRecipe = {currentRecipe} petInfo={petInfo} handleDelete={handleDelete} setCurrentRecipe={setCurrentRecipe}></RecipeSummary>
+        <RecipeSummary
+          currentRecipe={currentRecipe}
+          petInfo={petInfo}
+          handleDelete={handleDelete}
+          setCurrentRecipe={setCurrentRecipe}
+        ></RecipeSummary>
       </Modal>
-
     </div>
   );
 };
 
 export default IngredientsTable;
-

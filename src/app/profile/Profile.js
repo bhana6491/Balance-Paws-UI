@@ -1,12 +1,9 @@
 "use client";
 import React, { useState } from "react";
-import { Cascader, Typography, Divider} from "antd";
-import { StyleProvider } from '@ant-design/cssinjs';
+import {Typography} from "antd";
 import { useEffect } from "react";
 const {Title} = Typography;
-import { Avatar, UserOutlined, Dropdown, Menu, Space} from 'antd';
-import {PetForm} from '@/components/PetForm'
-import {PetTable} from '@/components/PetTable'
+import { Avatar,} from 'antd';
 export default function Profile({session}) {
   // Refactor this
   useEffect(() => {
@@ -27,9 +24,7 @@ export default function Profile({session}) {
         </div>
       </div>
       <div>
-        {/* <PetTable></PetTable>
-        <PetForm></PetForm> */}
-      </div>
+              </div>
     </div>
   );
 }

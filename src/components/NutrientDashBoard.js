@@ -17,6 +17,7 @@ const formatData = (data) => {
 }
 
 const macronutrientCalculator = (recipe) => {
+    console.log(recipe)
     const totalNutrients = sumNutrients(recipe);
     const energy = ((3.5 * totalNutrients['protein']) + (8.5 * totalNutrients['fat']) + (3.5 * totalNutrients['nitrogen_free_extract']))*10;
     const protein = (3.5 * totalNutrients['protein'])/energy * 1000;
@@ -116,6 +117,7 @@ const recommendationsCalculator = (recipe, petInfo) => {
 
 
 const NutrientDashBoard = ({ recipe, petInfo}) => {
+    console.log(petInfo)
 
     if (recipe.length == 0){
         return <Title level={5}>Please add ingredients to view nutrient analysis</Title>;
