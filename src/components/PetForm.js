@@ -19,21 +19,9 @@ import {
   lifeStageOptions,
 } from "@/app/recipes/constants";
 
-export const PetForm = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+export const PetForm = ({pets,setPets, setShowPetForm, setCurrentPet}) => {
+  const [isModalOpen, setIsModalOpen] = useState(true);
   const [form] = Form.useForm();
-  const [pets, setPets] = useState([]);
-
-  useEffect(() => {
-    const storedPets = sessionStorage.getItem("pets");
-    if (storedPets) {
-      setPets(JSON.parse(storedPets));
-    }
-  }, []);
-
-  const handleAddPet = () => {
-    setIsModalOpen(true);
-  };
 
   const handleCancel = () => {
     setIsModalOpen(false);
@@ -41,27 +29,17 @@ export const PetForm = () => {
   };
 
   const handleSubmit = (values) => {
-    const updatedPets = [...pets, values];
-    setPets(updatedPets);
-    sessionStorage.setItem("pets", JSON.stringify(updatedPets));
+    pets.push(values);
+    sessionStorage.setItem("pets", JSON.stringify(pets));
+    setPets(pets)
     setIsModalOpen(false);
+    setShowPetForm(false)
     form.resetFields();
   };
 
   return (
     <div className="parent bg-beige px-30 mt-1 bg-beige">
       <div className="">
-        <button
-          onClick={handleAddPet}
-          className="fill-earth-green rounded-md block text-base text-beige font-poppins"
-          style={{
-            backgroundColor: "#4F6F52",
-            width: "150px",
-            outline: "1px solid black",
-          }}
-        >
-          Add New Pet +
-        </button>
         <Modal
           title="Add Pet"
           open={isModalOpen}
